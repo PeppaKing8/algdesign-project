@@ -1,1 +1,1 @@
-# algdesign-project
+# Algorithm Design Project
