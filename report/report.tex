@@ -15,7 +15,7 @@
 
 % Page layout
 \geometry{a4paper, margin=1in}
-
+\setlength{\headheight}{14.49998pt}
 % Header and Footer
 \pagestyle{fancy}
 \fancyhf{}
@@ -35,6 +35,7 @@
 \date{\today}
 
 \newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
 
 \begin{document}
 
@@ -42,7 +43,9 @@
 
 % Abstract
 \begin{abstract}
-    Sheng Si Ju Ji Xue Bing Wang, Jian Xian Si Qi Fu Tou Bang.
+    Sheng Si Ju Ji Xue Bing Wang, Jian Xian Si Qi Fu Tou Bang.\\
+    \textbf{Abstract:} This is a survey on randomized algorithms on graphs. We focus on two well-known problems: All Pairs Shortest Path (APSP) and Min Cut. We introduce the deterministic algorithms for these problems, and then present the randomized algorithms. We analyze the time complexity and success probability of the randomized algorithms, and provide experimental results. You can find the source code of the algorithms in \url{https://github.com/PeppaKing8/algdesign-project}.\\
+    \textbf{Keywords:} Randomized Algorithms, Graph Theory, APSP, Min Cut
 \end{abstract}
 
 % Introduction
@@ -228,5 +231,150 @@ Since for $n=2^k$, Strassen's algorithm is much faster than other cases (which n
 \subsubsection{Weighted Graph}
 
 \subsection{Open Problems}
+\section{Min Cut}
 
+\subsection{Introduction}
+\textbf{Min Cut} problem is a well-known problem in graph theory. The problem is defined as follows: given a  undirected graph $G(V,E)$, with $V=\{1,2,\cdots,n\}$ and $|E|=m$, define the adjacent matrix $A$, where $A_{ij}=A_{ji}=1$ if $(i,j)\in E$ and $A_{ij}=A_{ji}=0$ otherwise. A \textbf{cut} of $G$ is a partition of $V$ into two sets $S$ and $V\backslash S$, where $S\neq\emptyset$ and $V\backslash S\neq\emptyset$. The \textbf{cost} of a cut $(S,V\backslash S)$ is defined as
+\begin{align*}
+    \text{cost}(S,V\backslash S)=\sum_{i\in S, j\in V\backslash S}A_{ij}
+\end{align*}
+
+The Min Cut problem is to find a cut $(S,V\backslash S)$ with the minimum cost.
+\subsection{Quick Review on Deterministic Algorithms}
+Deterministic algorithms for minimum cut problem are initially derived from minimum $s-t$ cut problem, which aims to find a partition that separates $s$ and $t$ and minimizes the weight between the edges. It's well known that 
+\begin{lemma}
+    In a undirected graph $G(V,E)$, given two vertices $s,t\in V$, the minimum $s-t$ cut equals the maximum $s-t$ flow.
+\end{lemma}
+To find the global minimum cut, a naive thought is exexuting maximum flow algorithm for $s=0,t=1,\cdots,n-1$, which has a time complexity of $O(n\text{MF}(n,m))$, where $\text{MF}(n,m)$ is the time complexity of maximum flow algorithm. Since the best deterministic maximum flow problem runs in time $O(mn\log(n^2/m))$, using this naive approach would requires $\Omega(n^2m)$. 
+
+Fortunately, using \textbf{Stoer-Wagner}\cite{stoer1997simple} algorithm, the $n-1$ maximum flow computations can be implemented in the time proportional to the cost of a single maximum flow, which has a time complexity of $O(nm+n^2\log n)$. 
+
+Using a more sophisticated algorithm, we can achieve a lower time complexity. In 2024, the \textbf{SOTA}\cite{doi:10.1137/1.9781611977912.111} of deterministic algorithm of Min Cut runs in $\tilde{O}(n^2)$ time, which is near optimal (since the input size is $\Omega(n+m)$, which is $\Omega(n^2)$ in the worst case).
+
+\subsection{Karger-Stein Algorithm}
+Now we introduce a randomized algorithm for Min Cut, which is based on Karger's algorithm\cite{karger1996new}. The algorithm is proposed by Karger and Stein in 1996.
+
+The randomized algorithm of Min Cut is a \textbf{Monte Carlo} algorithm, which runs in $O(cn^2\log^2 n)$ time with a failure probability of $O(1/n^c)$, where $c$ is any constant. The algorithm is based on the following procedure:
+\subsubsection{Contract}
+\begin{algorithm}
+\caption{Contract}
+\label{alg:contract}
+\begin{algorithmic}
+    \STATE \textbf{Input:} A multi-graph $G(V,E)$, a number $k$
+    \STATE \textbf{Output:} A graph $G'(V',E')$
+    \STATE $G'\leftarrow G$
+    \WHILE{$|V'|>k$}
+    \STATE choose an edge $(u,v)$ uniformly at random from $E'$
+    \STATE merge $u$ and $v$ into a new vertex $w$
+    \STATE remove all self-loops
+    \ENDWHILE
+    \RETURN $G'$
+\end{algorithmic}
+\end{algorithm}
+The multiplicity of an edge is the number of edges between two vertices, it can be represented by an integer weight on the edge. Hence the number of edges in the graph is $O(n^2)$. Each contraction step takes $O(n)$ time, so we get the following lemma:
+
+\begin{lemma}
+    For any $n$-vertex multi-graph $G$, the Algorithm \ref{alg:contract} runs in $O(n(n-k))$ time.
+\end{lemma}
+
+If we set $k=2$, the algorithm will return a graph with only two vertices, which equals to a cut of original graph. Based on the fact, we claim that
+
+\begin{lemma}
+    \label{lemma:cut}
+    A cut $C$ is produced by Algorithm \ref{alg:contract} if and only if none of the edges in $C$ is contracted.
+\end{lemma}
+
+Intuitively, since the edge $(u,v)$ is chosen uniformly at random, the probability of choosing an edge in $C$ increases as the number of edges in $C$ increases. Hence the min cut is produced with a higher probability than all the other cut. To determine the specific probability, we need to make use of the following fact:
+
+\begin{lemma}
+    \label{lemma:degree}
+    In an $n$-vertex multi-graph $G$ with min-cut value $k$, no vertex has degree smaller than $k$. The total number of edges $m$ is at least $nk/2$.
+\end{lemma}
+
+\begin{lemma}
+    \label{lemma:contract}
+    Given an edge $(u,v)$, the min-cut value of graph $G/(u,v)$ is at least the min-cut value of $G$.
+\end{lemma}
+
+Based on the above lemmas, we can prove the following theorem:
+
+\begin{theorem}
+    \label{theorem:contract}
+    Suppose that the Algorithm \ref{alg:contract} terminated when there are $k$ vertices left. Then any specific min-cut $K$ survives in the final graph with probability at least $\Omega(k^2/n^2)$.
+\end{theorem}
+\begin{proof}
+    The number of vertices in graph $G'$ decreases by exactly one during each iteration of Algorithm \ref{alg:contract}, at $i$-th iteration, there are $n_i=n-i+1$ vertices. Suppose none of the edges is contracted during the first $i-1$ iterations, accroding to Lemma \ref{lemma:cut} and \ref{lemma:degree}, $K$ is also min-cut of $G'$ annd the number of edges in $G'$ is at least $n_iK/2$. The probability of choosing an edge in $K$ is at most $2/n_i$. It follows that the probability of no edge of $K$ is contracted during Algorithm \ref{alg:contract} is
+\begin{align*}
+    \Pr[\text{no edge of }K\text{ is contracted}]&\ge\prod_{i=1}^{n-k+1}\left(1-\frac{2}{n-i+1}\right)\\
+    &=\prod_{j=k}^n\left(1-\frac{2}{j}\right)=\frac{(k-2)(k-1)}{n(n-1)}=\Omega\left(\frac{k^2}{n^2}\right)
+\end{align*}
+\end{proof}
+
+
+If we set $k=2$, the final output is a cut, and the probability of success is $\Omega(1/n^2)$. Repeating the algorithm for $O(n^2\log n)$ times gives a reasonable probability of success. This gives a Monte Carlo algorithm with a time complexity of $O(n^4\log n)$.
+
+\subsubsection{Fast Cut}
+The basic problem with Algorithm \ref{alg:contract} with $k=2$ is the success probability, since at the end of the contraction process there is non-negligible probability that an edge of $K$ gets contracted. This suggests us to contract the edges not too much at a time, based on this idea, we can design a new algorithm:
+
+\begin{algorithm}
+\caption{Fast Cut}
+\label{alg:fastcut}
+\begin{algorithmic}
+    \STATE \textbf{Input:} A multi-graph $G(V,E)$
+    \STATE \textbf{Output:} A cut $(S,V\backslash S)$
+    \STATE $n\leftarrow |V|$
+    \IF{$n\leq 6$} 
+    \STATE compute the min-cut by brute force
+    \RETURN min-cut $(S,V\backslash S)$
+    \ELSE
+    \STATE $t\leftarrow \lceil 1+n/\sqrt{2}\rceil$
+    \STATE Using Algorithm \ref{alg:contract}, perform 2 independent contraction processes to obtain graphs $H_1,H_2$ each with $t$ vertices
+    \STATE Recursively run Fast Cut on $H_1$ and $H_2$ to get cuts $(S_1,V_1\backslash S_1)$ and $(S_2,V_2\backslash S_2)$
+    \RETURN the cut with the smaller cost
+    \ENDIF
+    % \ELSE $k\leftarrow $
+\end{algorithmic}
+\end{algorithm}
+
+The algorithm is a recursive algorithm, Algorithm \ref{alg:contract} uses $O(n^2)$ time to reduce the number of vertices to $t$. We obtain the following recurrence for the running time $T(n)$ of Algorithm \ref{alg:fastcut}:
+\begin{align*}
+    T(n)=2T\left(\lceil 1+\frac{n}{\sqrt{2}}\rceil\right)+O(n^2)
+\end{align*}
+
+The solution to the recurrence is $T(n)=O(n^2\log n)$, it remains to compute the success probability of the algorithm. 
+
+\begin{theorem}
+    The success probability of Algorithm \ref{alg:fastcut} is $\Omega(\frac{1}{\log n})$.
+\end{theorem}
+\begin{proof}
+    By Theorem \ref{theorem:contract}, any specific min-cut $K$ survives a contraction sequence that reduce the number of vertices from $t$ to $\lceil 1+\frac{t}{\sqrt{2}}\rceil$ is at least
+    \begin{align*}
+        \frac{\lceil 1+\frac{t}{\sqrt{2}}\rceil(\lceil 1+\frac{t}{\sqrt{2}}\rceil-1)}{t(t-1)}\geq \frac{1}{2}
+    \end{align*}
+    Let $P(n)$ be the success probability of Algorithm \ref{alg:fastcut} on an $n$-vertex graph. We have
+    \begin{align*}
+        P(n)\geq 1-\left(1-\frac{1}{2}P\left(\lceil 1+\frac{n}{\sqrt{2}}\rceil\right)\right)^2
+    \end{align*}
+    By induction, we can prove that $P(n)=\Theta(1/\log n)$.
+\end{proof}
+Given the time and performance bounds on the algorithm, the following theorem is easily verified:
+
+\begin{theorem}
+    Algorithm \ref{alg:fastcut} is a Monte Carlo algorithm that runs in $O(cn^2\log^2 n)$ time with a failure probability of $\Omega(1/n^c)$.
+\end{theorem}
+
+\subsection{Experimental Results}
+We implemented the two algorithms for Min Cut: deterministic algorithm using Max Flow algorithm and the randomized algorithm Fast Cut.
+
+The algorithms are implemented with C++.
+
+\subsubsection{Settings}
+We set the graph size to be $n=2^k$, where $k\le 8$. In our experiment, edges are independently and uniformly generated. Besides, we also ensure the graph is connected by adding $M-1$ edges to connect the graph, where $M$ is the number of connected components.
+
+Our test environment is $\texttt{-std=C++11}$ on Apple M2 Pro chip with 10 cores and 16GB memory.
+
+\subsubsection{Results}
+We run the algorithms for 5 times and record the average execution time. 
+\bibliographystyle{plain} % or any other style you prefer
+\bibliography{csp__3089,stoer,kager}
 \end{document}

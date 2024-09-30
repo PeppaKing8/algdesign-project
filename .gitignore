@@ -1,2 +1,9 @@
 APSP/data
 report/report.pdf
+report/report.aux
+report/report.log
+report/report.out
+report/report.bbl
+report/report.blg
+report/report.synctex.gz
+.DS_Store
