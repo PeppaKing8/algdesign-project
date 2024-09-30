@@ -19,12 +19,11 @@
 % Header and Footer
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{X.B. Wang, Y.Y. Lu}
-\fancyhead[C]{Survey on Randomized Algorithms on Graphs}
+\fancyhead[C]{Survey of Randomized Techniques in Graph Algorithms}
 \fancyhead[R]{\thepage}
 
 % Title
-\title{Survey on Randomized Algorithms on Graphs}
+\title{Survey of Randomized Techniques in Graph Algorithms}
 \author{
     Wang Xianbang\thanks{Email: \texttt{wang-xb24@mails.tsinghua.edu.cn}} \\
     IIIS, Tsinghua University
@@ -32,7 +31,6 @@
     Lu Yiyang\thanks{Email: \texttt{WOBUZHIDAO@mails.tsinghua.edu.cn}} \\
     IIIS, Tsinghua University
 }
-\date{\today}
 
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
@@ -160,16 +158,139 @@ Observe that, the preceding algorithm does not provide enough information of suc
 
 Suppose $D$ is computed with algorithm \ref{alg:example}. For every $i,j\in V$, how to find $S_{ij}$? Or, what is the necessary and sufficient condition of $S_{ij}$? The answer of the last question is clear: $(i,S_{ij})\in E$, and $D_{ij}-1 = D_{S_{ij}j}$. Let $r=D_{ij}$. For every integer $u\ge 0$, define $D^{(u)}$ as: $D^{(u)}_{ij}=1$ iff $D_{ij}=u$. So $S_{ij}$ is one of the \textbf{witness} of $A$ and $D^{(r-1)}$ w.r.t $i,j$. (\emph{Note: the witness of two matrices $A$ and $B$ w.r.t. $i,j$ is an index $x$ that $A_{ix}=B_{xj}=1$.})
 
-Given two 0-1 matrices $A,B$, to compute a \textbf{witness matrix} is a well-known problem in computer science called \textbf{Boolean Product Witness Matrix (BPWM)}. We will leave the implementation of BPWM in section \ref{sec:bpwm}.
+Given two 0-1 matrices $A,B$, to compute a \textbf{witness matrix} is a well-known problem in computer science called \textbf{Boolean Product Witness Matrix (BPWM)}. We will leave the implementation of BPWM in section \ref{sec:bpwm}. Now assume we have a black box \texttt{BPWM(A,B)}.
+
+From the above discussion, we need to enumerate $r=1,2,\cdots,n$ and compute $D^{(r-1)}$ for each $r$, and derive the witness matrix of $A$ and $D^{(r-1)}$, which needs $O(n)$ times of \texttt{BPWM}. However, a clever optimization can reduce to only $3$ times. For $s=0,1,2$, Let $D^{[s]}$ be the matrix where $D^{[s]}_{ij}=1$ iff $D_{ij}\equiv s\pmod 3$. Denote the witness of $A$ and $D^{[s]}$ by $W^{[s]}$.
+
+\begin{lemma}
+\label{5}
+For every $i,j\in V$, $S_{ij}=W^{[(D_{ij}-1)\mod 3]}_{ij}$.
+\end{lemma}
+\begin{proof}
+Firstly, $S_{ij}$ is a witness of $A$ and $W^{[(D_{ij}-1)\mod 3]}$. This is because $(i,S_{ij})\in E$, and $D_{S_{ij}j}=D_{ij}-1$, thereby also $\equiv D_{ij}-1\pmod 3$. Note that this also implies that $W^{[(D_{ij}-1)\mod 3]}_{ij}$ exists.\\
+On the other hand, suppose $v=W^{[(D_{ij}-1)\mod 3]}_{ij}$. Then $D_{vj}\equiv D_{ij}-1\pmod 3$, and $v$ is a neighbor of $i$. Since from Lemma \ref{3}, $D_{vj}\in [D_{ij}-1,D_{ij}+1]$, we immediately get $D_{vj}=D_{ij}-1$, which means $v$ is one of the successor.
+\end{proof}
+
+Thus, if $W^{[s]}(s=0,1,2)$ is computed, $S$ can be derived in $O(n^2)$ time. The time complexity is $O(f(n)+n^2)$, where $f(n)$ is the time complexity of \texttt{BPWM}, obviously $\Omega(n^2)$.
 
 \subsubsection{BPWM}
 \label{sec:bpwm}
 
+Recall that the input of BPWM is two 0-1 $n\times n$ matrices $A,B$, and the output is a matrix $W$, where $W_{ij}$ is the witness of $A$ and $B$ w.r.t. $i,j$.
+
+Consider a simple case: assume for every $i,j$, the witness is \textbf{unique}. Define a``weighted'' matrix $A^{\#}$ as: $A^{\#}_{ik}=kA_{ik}$. Now, we compute $W^{\#}=A^{\#}B$. Since $A^{\#}$ is weighted - intuitively, the vertex $i$ has value $i$. From the definition of $W^{\#}$, $W^{\#}_{ij}$ is the sum of the values of all the witnesses. Since the witness is unique, $W^{\#}_{ij}$ is the value of the witness. So we can derive $W$ from $W^{\#}$ in $O(n^2)$ time - $W=W^{\#}$, actually.
+
+Now consider the general case. We continue to use the ``weighted'' idea, but just choose a \textbf{subset} of $V$ to be the weighted. If we are lucky, the witness is unique within the subset, and we are done. We will see that randomization give us that luck.
+
+For every $i,j$, suppose there are $t$ witnesses. From easy math, there exists a positive integer $r$, such that $\dfrac{n}{2}\le tr\le n$. Randomly choose a subset of rank $r$ of $V$, and weight them with their own index. For other $n-r$ vertices, weight them with $0$. The following lemma shows the probability of choosing a unique witness is larger than a positive constant!
+
+\begin{lemma}
+\label{6}
+Let $v=\{1,2,\cdots,n\}$, $S_0=\{1,\cdots,t\}$, integer $r$ satisfies $\dfrac{n}{2}\le tr\le n$. Randomly choose a subset $S\subseteq V$ of rank $r$. We have
+$$P(|S\cap S_0|=1)\ge \dfrac{1}{2e}.$$
+\end{lemma}
+\begin{proof}
+Since $tr\le n$, we have $\dfrac{r-1}{n-t}\le \dfrac{1}{t}$. The probability is
+\begin{align*}
+\dfrac{t\cdot \binom{n-t}{r-1}}{\binom{n}{r}} &= t\cdot \dfrac{(n-t)!r!(n-r)!}{(r-1)!(n-t-r+1)!n!}\\
+&= \dfrac{tr}{n}\cdot \dfrac{(n-t)!(n-r)!}{(n-t-r+1)!(n-1)!}\\
+&= \dfrac{tr}{n}\cdot \prod\limits_{i=0}^{t-2} \dfrac{n-r-i}{n-1-i}\\
+&\ge \dfrac{tr}{n}\cdot \left(1-\dfrac{r-1}{n-t}\right)^{t-1}\\
+&\ge \dfrac{1}{2}\cdot \left(1-\dfrac{1}{t}\right)^{t-1} \ge \dfrac{1}{2e}.
+\end{align*}
+\end{proof}
+
+Lemma \ref{6} shows that, if we try $L$ different subsets, the probability to fail (i.e. in each case $|S\cup S_0|\not=1$) will be $O(\exp{\Theta(n)})$. Lemma \ref{7} shows that we can choose appropiate $r$ within a set of $O(\log n)$ candidates.
+
+\begin{lemma}
+\label{7}
+For every $1\le t\le n$, there exists a natural number $k\le \log n$, such that $\dfrac{n}{2}\le t\cdot 2^k\le n$.
+\end{lemma}
+\begin{proof}
+Let $k$ be the largest integer such that $t\cdot 2^k\le n$. Then $t\cdot 2^{k+1}>n$, so $t\cdot 2^k\le n/2$. And $2^k\le t\cdot 2^k\le n$, so $k\le \log n$, as desired.
+\end{proof}
+
+So the algorithm is as follows: enumerate every $r=1,2,\cdots,2^{\lfloor\log n\rfloor}$. For every $r$, randomly choose $L=\Theta(\log n)$ subsets of rank $r$, and compute the witness matrix. For every $i,j$, Lemma \ref{6} tells us the probability to fail is $o(\dfrac{1}{n^2})$ if $\lim\limits_{n\to \infty}\dfrac{L}{\log n}$ is sufficiently large. Then the union bound directly bounds the failing probability by $o(1)$.
+
+If we have missed some witness (which is very unlucky), we found these missing witnesses by brute-force - $O(n)$ for every pair $(i,j)$. Since the expected number of missing pair is $O(1)$, the time complexity of this procedure can be ignored.
+
+In practice, we set $L=\gamma\log n$, where $\gamma$ is a constant. We pick $\gamma=3$ in practice, considering the trade-off between time complexity and success probability. 
+
+The whole algorithm (APSP) is shown in Algorithm \ref{alg:BPWM}. The black box \texttt{BPWM} is implemented in Algorithm \ref{alg:bp}.
+
+\begin{algorithm}
+    \caption{APSP}
+    \label{alg:BPWM}
+    \begin{algorithmic}
+        \STATE \textbf{Input:} Graph $G=(V,E)$ with adjacency matrix $A$
+        \STATE \textbf{Output:} Successor matrix $S$
+        \STATE $D\leftarrow \text{APD}(A)$
+        \FOR{$s\in \{0,1,2\}$}
+            \STATE compute $D^{[s]}$ by: $D^{[s]}_{ij}=1$ iff $D_{ij}\equiv s\pmod 3$
+            \STATE $W^{[s]}\leftarrow \text{BPWM}(A,D^{[s]})$
+        \ENDFOR
+        \FOR{$i=1$ to $n$}
+            \FOR{$j=1$ to $n$}
+                \STATE $r\leftarrow (D_{ij}-1)\mod 3$
+                \STATE $S_{ij}\leftarrow W^{[r]}_{ij}$
+            \ENDFOR
+        \ENDFOR
+    \RETURN $S$
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{BPWM}
+    \label{alg:bp}
+    \begin{algorithmic}
+        \STATE \textbf{Input:} 0-1 matrices $A,B$ of size $n\times n$
+        \STATE \textbf{Output:} Witness matrix $W$
+        \FOR{$t=0,1,\cdots,[\log n]$}
+            \STATE $r\leftarrow 2^t$
+            \FOR{$l=1$ to $\gamma\log n$}
+                \STATE Randomly choose a subset $S$ of rank $r$
+                \STATE construct $A^{\#}$: $A^{\#}_{ik}\leftarrow kA_{ik}$ for $i\in S$, $0$ otherwise
+                \STATE $W^{\#}\leftarrow A^{\#}B$
+                \FORALL{$(i,j)$}
+                    \STATE $W_{ij}\leftarrow W^{\#}_{ij}$ if $W_{ij}$ is not defined and $W^{\#}_{ij}$ is a witness
+                \ENDFOR
+            \ENDFOR
+        \ENDFOR
+        \FORALL{$(i,j)$}
+            \IF{$W_{ij}$ is not defined}
+                \STATE $W_{ij}\leftarrow$ brute-force to find the witness
+            \ENDIF
+        \ENDFOR
+    \RETURN $W$
+    \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Time Complexity Analysis}
+
+\paragraph{APD} APD is a deterministic algorithm and it performs recursively. Since every recursion we reduce the length of the shortest path by a half, the depth of the recursion is $O(\log n)$. In every recursion, we need to compute $A^*$ and $S$, which takes $O(n^{\nu})$ time (recall that this is the hypothesized time complexity of matrix multiplication). Other procedures just take $O(n^2)=o(n^{\nu})$ time. So the time complexity of APD is $O(n^{\nu}\log n)$.
+
+\paragraph{BPWM} Consider $(t,l)$, we have $O(\log n\cdot \log n)=O(\log^2 n)$ pairs. For every pair, we need to compute $W^{\#}$, which takes $O(n^{\nu})$ time. Other procedures take $O(n^2)$ time. So the time complexity of BPWM is $O(n^{\nu}\log^2 n)$.
+
+\paragraph{APSP} APSP calls APD and BPWM for constant times, so the time complexity is $O(n^{\nu}\log^2 n)$.
+
 \subsubsection{Small Improvement}
+\label{imp}
+
+Use carefully analysis, we can actually show that BPWM is $O(n^\nu \log n)$, so APSP is also $O(n^\nu \log n)$. The key idea is, $A^\#$ can be reduced to $n\times r$, so $W^\#$ is actually multiplication of two matrices of size $n\times r$ and $r\times n$ respectively.
+
+For matrix of size $n\times r$, divide it into $\lfloor\dfrac{n}{r}\rfloor$ blocks (by row). For $r\times n$ matrix is similar. Then we can compute each pair of blocks in $O(r^{\nu})$ time, and combine them into one single $n\times n$ matrix in $O(n^2)$ time. So the time complexity of this multiplication is $O(r^\nu(\dfrac{n}{r})^2)=O(r^{\nu-2}n^2)$.
+
+So, the time complexity of BPWM is
+\begin{align*}
+\sum\limits_{t=0}^{\log n}\sum\limits_{l=1}^{\gamma\log n} O(r^{\nu-2}n^2) &= \gamma\log n\cdot \sum\limits_{t=0}^{\log n} O(r^{\nu-2}n^2)\\
+&= \gamma\log n\cdot O(n^2)\cdot \sum\limits_{t=0}^{\log n} O(2^{t(\nu-2)})\\
+&= \gamma\log n\cdot O(n^2)\cdot O(n^{\nu-2}) = O(n^\nu\log n)
+\end{align*}
+if $\nu>2$.
 
 \subsection{Experimental Results}
 
-We implemented four algorithms for APSP: for the deterministic algorithms, we implemented Floyd-Warshall and BFS; for the randomized algorithms, we implemented the matrix multiplication-based algorithm with two versions: one with Strassen's algorithm and the other with the trivial matrix multiplication.
+We implemented four algorithms for APSP: for the deterministic algorithms, we implemented Floyd-Warshall and BFS; for the randomized algorithms, we implemented the matrix multiplication-based algorithm with two versions: one with Strassen's algorithm and the other with the trivial matrix multiplication. The latter two is the improved version of the algorithm in section \ref{imp}.
 
 Algorithms are implemented with C++.
 
