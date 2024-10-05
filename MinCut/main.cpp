@@ -1,6 +1,7 @@
 #include "graph.h"
 using namespace std;
-const int V = 500;
+
+const int V = 700;
 const int N = V+5;
 const int INF = 0x3f3f3f3f;
 int n, m;
@@ -246,7 +247,8 @@ int FastCut(const Graph & graph) {
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+      
       std::vector<Graph> graphs;
       int tryTime = 50;
       int seed = std::time(0);
@@ -263,6 +265,9 @@ int main() {
       int fast_cut_result = INF;
       for (int i = 0; i < tryTime; i++) {
             fast_cut_result = std::min(fast_cut_result, FastCut(graphs[i]));
+            if (fast_cut_result == min_cut_result) {
+               break;
+            }
       }
       end = std::chrono::high_resolution_clock::now();
       std::chrono::duration<double> fast_cut_duration = end - start;

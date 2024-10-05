@@ -41,14 +41,14 @@
 
 % Abstract
 \begin{abstract}
-    Sheng Si Ju Ji Xue Bing Wang, Jian Xian Si Qi Fu Tou Bang.\\
-    \textbf{Abstract:} This is a survey on randomized algorithms on graphs. We focus on two well-known problems: All Pairs Shortest Path (APSP) and Min Cut. We introduce the deterministic algorithms for these problems, and then present the randomized algorithms. We analyze the time complexity and success probability of the randomized algorithms, and provide experimental results. You can find the source code of the algorithms in \url{https://github.com/PeppaKing8/algdesign-project}.\\
+    This is a survey on randomized algorithms on graphs. We focus on two well-known problems: All Pairs Shortest Path (APSP) and Min Cut. We introduce the deterministic algorithms for these problems, and then present the randomized algorithms. We analyze the time complexity and success probability of the randomized algorithms, and provide experimental results. You can find the source code of the algorithms in \url{https://github.com/PeppaKing8/algdesign-project}.
+
     \textbf{Keywords:} Randomized Algorithms, Graph Theory, APSP, Min Cut
 \end{abstract}
 
 % Introduction
 \section{APSP: All Pairs Shortest Path}
-\subsection{Introduction}
+\subsection{Introduction}\
 
 One of the well-known result in randomized algorithms in graph theory is the algorithm for the \textbf{All Pairs Shortest Path (APSP)} problem.
 
@@ -60,7 +60,7 @@ If $G$ is not connected, we can seperate $G$ into connected components and solve
 
 Note that, if we want to store all the shortest paths, the space complexity can be $\Omega(n^3)$ (e.g. a path), which limits the time complexity we can achieve. However, we can record an \emph{implicit} representation of the shortest path - the \textbf{successor matrix} $S$: for every $(u,v)\in V^2$, let $S_{uv}$ be the vertex that is the immediate successor of $u$ on the shortest path from $u$ to $v$. This can be stored in $O(n^2)$ space, and the shortest path from $u$ to $v$ can be reconstructed by following the path $u\to S_{uv}\to S_{S_{uv}v}\to\cdots\to v$ in $O(L)$ time, where $L$ is the length of the shortest path.
 
-\subsection{Quick Review on Deterministic Algorithms}
+\subsection{Quick Review on Deterministic Algorithms}\
 
 The most well-known algorithm for APSP is the \textbf{Floyd-Warshall} algorithm, which has a time complexity of $O(n^3)$. The algorithm is based on dynamic programming, and the key idea is to consider all vertices as potential intermediate vertices in the shortest path. The algorithm is simple and easy to implement.
 
@@ -70,11 +70,11 @@ For weighted graph (every edge has a weight), the \textbf{Johnson} algorithm can
 
 It is clear that the best time complexity we can achieve for APSP is $\Omega(n^2)$, since we need to output $n^2$ shortest paths. And we also believe that $O(nm)$ is still far away from the best, especially if $m=\Omega(n^2)$.
 
-\subsection{Matrix Multiplication-based Algorithm}
+\subsection{Matrix Multiplication-based Algorithm}\
 
 Now we introduce a randomized algorithm for APSP, which is based on matrix multiplication. The algorithm is proposed by Alon, Galil, and Margalit in 1994.
 
-\subsubsection{Skim on Matrix Multiplication}
+\subsubsection{Skim on Matrix Multiplication}\
 
 Given two $n\times n$ matrices $A$ and $B$, the product $C=AB$ is defined as $C_{ij}=\sum_{k=1}^n A_{ik}B_{kj}$. The naive algorithm has a time complexity of $O(n^3)$. The lower bound of matrix multiplication is obviously $\Omega(n^2)$, and computer scientists have been trying to find a better exponent $2<\alpha<3$ until now.
 
@@ -82,7 +82,8 @@ Strassen proposed a divide-and-conquer algorithm in 1969, which has a time compl
 
 \emph{From now on, suppose we have a matrix multiplication algorithm with time complexity $O(n^\nu)$.}
 
-\subsubsection{APD}
+\subsubsection{APD}\
+
 Recall that $A$ is adjacent matrix. Let $\bar{A}$ be the matrix where $\bar{A}_{ij}=1$ if $i=j$ or $A_{ij}=1$. The connection between shortest path and matrix multiplication is revealed by the following lemma.
 \begin{lemma}
     \label{lemma:shortest_path_matrix_multiplication}
@@ -152,7 +153,7 @@ $d_i$ is the degree of $i$. If $S=AD'$, then $D_{ij}$ is even iff $S_{ij}\ge d_i
 \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{APSP}
+\subsubsection{APSP}\
 
 Observe that, the preceding algorithm does not provide enough information of successor matrix $S$. More precisely, if $D_{ij}$ is even, it is not guaranteed from Lemma \ref{4} that we can find $k$ just from $D'$.
 
@@ -174,7 +175,7 @@ On the other hand, suppose $v=W^{[(D_{ij}-1)\mod 3]}_{ij}$. Then $D_{vj}\equiv D
 Thus, if $W^{[s]}(s=0,1,2)$ is computed, $S$ can be derived in $O(n^2)$ time. The time complexity is $O(f(n)+n^2)$, where $f(n)$ is the time complexity of \texttt{BPWM}, obviously $\Omega(n^2)$.
 
 \subsubsection{BPWM}
-\label{sec:bpwm}
+\label{sec:bpwm}\
 
 Recall that the input of BPWM is two 0-1 $n\times n$ matrices $A,B$, and the output is a matrix $W$, where $W_{ij}$ is the witness of $A$ and $B$ w.r.t. $i,j$.
 
@@ -274,7 +275,7 @@ The whole algorithm (APSP) is shown in Algorithm \ref{alg:BPWM}. The black box \
 \paragraph{APSP} APSP calls APD and BPWM for constant times, so the time complexity is $O(n^{\nu}\log^2 n)$.
 
 \subsubsection{Small Improvement}
-\label{imp}
+\label{imp}\
 
 Use carefully analysis, we can actually show that BPWM is $O(n^\nu \log n)$, so APSP is also $O(n^\nu \log n)$. The key idea is, $A^\#$ can be reduced to $n\times r$, so $W^\#$ is actually multiplication of two matrices of size $n\times r$ and $r\times n$ respectively.
 
@@ -288,23 +289,23 @@ So, the time complexity of BPWM is
 \end{align*}
 if $\nu>2$.
 
-\subsection{Experimental Results}
+\subsection{Experimental Results}\
 
 We implemented four algorithms for APSP: for the deterministic algorithms, we implemented Floyd-Warshall and BFS; for the randomized algorithms, we implemented the matrix multiplication-based algorithm with two versions: one with Strassen's algorithm and the other with the trivial matrix multiplication. The latter two is the improved version of the algorithm in section \ref{imp}.
 
 Algorithms are implemented with C++.
 
-\subsubsection{Settings}
+\subsubsection{Settings}\
 
 We set the graph size to be $n=2^k$, where $k\le 8$. In our experiment, edges are independently and uniformly generated, each with probability $p$. To ensure the graph is connected, after graph is randomly generated, we add $M-1$ edges to connect the graph, where $M$ is the number of connected components.
 
 Our test environment is $\texttt{-std=C++11}$ and has unlimited stack size. 
 
-\subsubsection{Parameters}
+\subsubsection{Parameters}\
 
 We set $\gamma=3$ in BPWM, and the threshold of Strassen's algorithm to be $n_0=64$. $p=0.1$ since we do not want the graph to be too dense, and also limit the performance of BFS.
 
-\subsubsection{Results}
+\subsubsection{Results}\
 
 We run the algorithms for 5 times and record the average execution time. The results of $k=7,8$ ($n=128,256$) are shown in Figure \ref{fig:et}. 
 
@@ -337,7 +338,7 @@ An interesting phenomenon is, when $k$ increase by 1, the execution time of \tex
     \label{fig:et}
 \end{figure}
 
-\subsubsection{Analysis}
+\subsubsection{Analysis}\
 
 Granted, although the time complexity of \texttt{Strassen} is better than \texttt{BFS} and \texttt{Floyd}, the actual execution time is much larger. This is because the constant factor of Strassen's algorithm is remarkably large. Moreover, if the parameter is not carefully chosen, or $p$ is much smaller, \texttt{BFS} will perform even better and \texttt{Strassen} and \texttt{Trivial} will be even worse. Consequently, the matrix multiplication-based algorithm has less practical significance than theoretical significance.
 
@@ -354,14 +355,16 @@ Since for $n=2^k$, Strassen's algorithm is much faster than other cases (which n
 \subsection{Open Problems}
 \section{Min Cut}
 
-\subsection{Introduction}
+\subsection{Introduction}\
+
 \textbf{Min Cut} problem is a well-known problem in graph theory. The problem is defined as follows: given a  undirected graph $G(V,E)$, with $V=\{1,2,\cdots,n\}$ and $|E|=m$, define the adjacent matrix $A$, where $A_{ij}=A_{ji}=1$ if $(i,j)\in E$ and $A_{ij}=A_{ji}=0$ otherwise. A \textbf{cut} of $G$ is a partition of $V$ into two sets $S$ and $V\backslash S$, where $S\neq\emptyset$ and $V\backslash S\neq\emptyset$. The \textbf{cost} of a cut $(S,V\backslash S)$ is defined as
 \begin{align*}
     \text{cost}(S,V\backslash S)=\sum_{i\in S, j\in V\backslash S}A_{ij}
 \end{align*}
 
 The Min Cut problem is to find a cut $(S,V\backslash S)$ with the minimum cost.
-\subsection{Quick Review on Deterministic Algorithms}
+\subsection{Quick Review on Deterministic Algorithms}\
+
 Deterministic algorithms for minimum cut problem are initially derived from minimum $s-t$ cut problem, which aims to find a partition that separates $s$ and $t$ and minimizes the weight between the edges. It's well known that 
 \begin{lemma}
     In a undirected graph $G(V,E)$, given two vertices $s,t\in V$, the minimum $s-t$ cut equals the maximum $s-t$ flow.
@@ -372,10 +375,13 @@ Fortunately, using \textbf{Stoer-Wagner}\cite{stoer1997simple} algorithm, the $n
 
 Using a more sophisticated algorithm, we can achieve a lower time complexity. In 2024, the \textbf{SOTA}\cite{doi:10.1137/1.9781611977912.111} of deterministic algorithm of Min Cut runs in $\tilde{O}(n^2)$ time, which is near optimal (since the input size is $\Omega(n+m)$, which is $\Omega(n^2)$ in the worst case).
 
-\subsection{Karger-Stein Algorithm}
+\subsection{Karger-Stein Algorithm}\
+
 Now we introduce a randomized algorithm for Min Cut, which is based on Karger's algorithm\cite{karger1996new}. The algorithm is proposed by Karger and Stein in 1996.
 
-The randomized algorithm of Min Cut is a \textbf{Monte Carlo} algorithm, which runs in $O(cn^2\log^2 n)$ time with a failure probability of $O(1/n^c)$, where $c$ is any constant. The algorithm is based on the following procedure:
+The randomized algorithm of Min Cut is a \textbf{Monte Carlo} algorithm, which runs in $O(cn^2\log^2 n)$ time with a failure probability of $O(1/n^c)$, where $c$ is any constant. As we can see, the algorithm can achieve near optimal time complexity with a very low failure probability.
+
+The algorithm is based on the following procedure:
 \subsubsection{Contract}
 \begin{algorithm}
 \caption{Contract}
@@ -434,7 +440,8 @@ Based on the above lemmas, we can prove the following theorem:
 
 If we set $k=2$, the final output is a cut, and the probability of success is $\Omega(1/n^2)$. Repeating the algorithm for $O(n^2\log n)$ times gives a reasonable probability of success. This gives a Monte Carlo algorithm with a time complexity of $O(n^4\log n)$.
 
-\subsubsection{Fast Cut}
+\subsubsection{Fast Cut}\
+
 The basic problem with Algorithm \ref{alg:contract} with $k=2$ is the success probability, since at the end of the contraction process there is non-negligible probability that an edge of $K$ gets contracted. This suggests us to contract the edges not too much at a time, based on this idea, we can design a new algorithm:
 
 \begin{algorithm}
@@ -484,18 +491,30 @@ Given the time and performance bounds on the algorithm, the following theorem is
     Algorithm \ref{alg:fastcut} is a Monte Carlo algorithm that runs in $O(cn^2\log^2 n)$ time with a failure probability of $\Omega(1/n^c)$.
 \end{theorem}
 
-\subsection{Experimental Results}
+\subsection{Experimental Results}\
+
 We implemented the two algorithms for Min Cut: deterministic algorithm using Max Flow algorithm and the randomized algorithm Fast Cut.
 
 The algorithms are implemented with C++.
 
-\subsubsection{Settings}
-We set the graph size to be $n=2^k$, where $k\le 8$. In our experiment, edges are independently and uniformly generated. Besides, we also ensure the graph is connected by adding $M-1$ edges to connect the graph, where $M$ is the number of connected components.
+\subsubsection{Settings}\
 
-Our test environment is $\texttt{-std=C++11}$ on Apple M2 Pro chip with 10 cores and 16GB memory.
+We set the graph size to be $n\in\{200,300,400,500,600,700\}$. In our experiment, edges are independently and uniformly generated. Besides, we also ensure the graph is connected by adding $M-1$ edges to connect the graph, where $M$ is the number of connected components.
 
-\subsubsection{Results}
-We run the algorithms for 5 times and record the average execution time. 
+Our test environment is $\texttt{-std=C++11}$ on Ubuntu 20.04 using AMD EPYC 7452 32-Core Processor with 512GB RAM.
+
+\subsubsection{Results}\
+
+We run the algorithms for 100 times for each $n$ and record the average execution time. Since our Fast Cut algorithm is a Monte Carlo algorithm, we run until getting a successful result.  The results are shown in Figure \ref{fig:mc}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../MinCut/MinCut.png}
+    \caption{Execution time of Min Cut and Fast Cut\ref{alg:fastcut} algorithm}
+    \label{fig:mc}
+\end{figure}
+
+As we can see from the figure, when $n$ increases, the execution time of Fast Cut increases slower than Min Cut. When $n\approx 750$, the execution time of Fast Cut first exceeds Min Cut, which shows the advantage of Fast Cut in large-scale graphs.
 \bibliographystyle{plain} % or any other style you prefer
 \bibliography{csp3089,stoer,kager}
 \end{document}
