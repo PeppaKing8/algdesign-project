@@ -84,7 +84,7 @@ Strassen proposed a divide-and-conquer algorithm in 1969, which has a time compl
 
 \subsubsection{APD}\
 
-Recall that $A$ is adjacent matrix. Let $\bar{A}$ be the matrix where $\bar{A}_{ij}=1$ if $i=j$ or $A_{ij}=1$. The connection between shortest path and matrix multiplication is revealed by the following lemma.
+Recall that $A$ is adjacency matrix. Let $\bar{A}$ be the matrix where $\bar{A}_{ij}=1$ if $i=j$ or $A_{ij}=1$. The connection between shortest path and matrix multiplication is revealed by the following lemma.
 \begin{lemma}
     \label{lemma:shortest_path_matrix_multiplication}
     Let $k$ be an positive integer. For every $i,j\in V$, $D_{ij}\le k$ if and only if $\bar{A}^k_{ij}>0$.
@@ -357,7 +357,7 @@ Since for $n=2^k$, Strassen's algorithm is much faster than other cases (which n
 
 \subsection{Introduction}\
 
-\textbf{Min Cut} problem is a well-known problem in graph theory. The problem is defined as follows: given a  undirected graph $G(V,E)$, with $V=\{1,2,\cdots,n\}$ and $|E|=m$, define the adjacent matrix $A$, where $A_{ij}=A_{ji}=1$ if $(i,j)\in E$ and $A_{ij}=A_{ji}=0$ otherwise. A \textbf{cut} of $G$ is a partition of $V$ into two sets $S$ and $V\backslash S$, where $S\neq\emptyset$ and $V\backslash S\neq\emptyset$. The \textbf{cost} of a cut $(S,V\backslash S)$ is defined as
+\textbf{Min Cut} problem is a well-known problem in graph theory. The problem is defined as follows: given a  undirected graph $G(V,E)$, with $V=\{1,2,\cdots,n\}$ and $|E|=m$, define the adjacency matrix $A$, where $A_{ij}=A_{ji}=1$ if $(i,j)\in E$ and $A_{ij}=A_{ji}=0$ otherwise. A \textbf{cut} of $G$ is a partition of $V$ into two sets $S$ and $V\backslash S$, where $S\neq\emptyset$ and $V\backslash S\neq\emptyset$. The \textbf{cost} of a cut $(S,V\backslash S)$ is defined as
 \begin{align*}
     \text{cost}(S,V\backslash S)=\sum_{i\in S, j\in V\backslash S}A_{ij}
 \end{align*}
@@ -401,6 +401,7 @@ The algorithm is based on the following procedure:
 The multiplicity of an edge is the number of edges between two vertices, it can be represented by an integer weight on the edge. Hence the number of edges in the graph is $O(n^2)$. Each contraction step takes $O(n)$ time, so we get the following lemma:
 
 \begin{lemma}
+    \label{lemma:9}
     For any $n$-vertex multi-graph $G$, the Algorithm \ref{alg:contract} runs in $O(n(n-k))$ time.
 \end{lemma}
 
@@ -503,18 +504,61 @@ We set the graph size to be $n\in\{200,300,400,500,600,700\}$. In our experiment
 
 Our test environment is $\texttt{-std=C++11}$ on Ubuntu 20.04 using AMD EPYC 7452 32-Core Processor with 512GB RAM.
 
-\subsubsection{Results}\
-
-We run the algorithms for 100 times for each $n$ and record the average execution time. Since our Fast Cut algorithm is a Monte Carlo algorithm, we run until getting a successful result.  The results are shown in Figure \ref{fig:mc}.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{../MinCut/MinCut.png}
+    \includegraphics[width=0.75\textwidth]{../MinCut/MinCut.png}
     \caption{Execution time of Min Cut and Fast Cut\ref{alg:fastcut} algorithm}
     \label{fig:mc}
 \end{figure}
 
+\subsubsection{Results}\
+
+We run the algorithms for 100 times for each $n$ and record the average execution time. Since our Fast Cut algorithm is a Monte Carlo algorithm, we run until getting a successful result.  The results are shown in Figure \ref{fig:mc}.
+
 As we can see from the figure, when $n$ increases, the execution time of Fast Cut increases slower than Min Cut. When $n\approx 750$, the execution time of Fast Cut first exceeds Min Cut, which shows the advantage of Fast Cut in large-scale graphs.
+
+\subsection{Extensions}
+\subsubsection{Weighted Graph}\
+
+Weighted graph is a graph where each edge $(u,v)$ has a weight $w_{uv}$. We require the weight to be non-negative, otherwise the Min Cut problem is NP-complete since it can be reduced to Max Cut by a transformation \cite{garey1979computers}.
+
+To handle the weighted graph, we can modify the contraction process in Algorithm \ref{alg:contract} to merge the weights of the edges.
+\begin{algorithm}
+    \caption{Weighted Contract}
+    \label{alg:weightcontract}
+    \begin{algorithmic}
+        \STATE \textbf{Input:} A multi-graph $G(V,E)$, a number $k$
+        \STATE \textbf{Output:} A graph $G'(V',E')$
+        \STATE $G'\leftarrow G$
+        \WHILE{$|V'|>k$}
+        \STATE randomly choose an edge $(u,v)$ from $E'$ with probability proportional to the weight of the edge
+        \STATE merge $u$ and $v$ into a new vertex $w$, the weight of the edge between $w$ and $x$ is the sum of the weights of the edges between $u$ and $x$ and $v$ and $x$
+        \STATE remove all self-loops
+        \ENDWHILE
+        \RETURN $G'$
+    \end{algorithmic}
+\end{algorithm}
+
+Using the Weighted Contract algorithm, the edge with larger weight has a higher probability of being chosen. Using a similar analysis, we know Lemma \ref{lemma:9}, \ref{lemma:cut} and \ref{lemma:contract} still hold, and Lemma \ref{lemma:degree} can be modified to the weighted version.
+
+\begin{lemma}
+    In an $n$-vertex weighted graph $G$ with min-cut value $k$, no vertex has outgoing weight smaller than $k$. The total weight of the edges is at least $nk/2$.
+\end{lemma}
+
+Based on the above lemmas, we still have Theorem \ref{theorem:contract}, thus the Weighted Fast Cut algorithm can be implemented in a similar way.
+
+\subsubsection{Directed Graph}\
+
+The adjacency matrix of directed graph is not symmetric, so the Min Cut problem is different from the undirected graph.
+
+The cost of cut $(S,V\backslash S)$ in directed graph is also defined as
+\begin{align*}
+    \text{cost}(S,V\backslash S)=\sum_{i\in S, j\in V\backslash S}A_{ij}
+\end{align*}
+
+\subsection{Open Problems}
+
 \bibliographystyle{plain} % or any other style you prefer
-\bibliography{csp3089,stoer,kager}
+\bibliography{csp3089,stoer,kager,gj79}
 \end{document}
