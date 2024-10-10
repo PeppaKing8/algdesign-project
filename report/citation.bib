@@ -1,3 +1,13 @@
+@inproceedings{inproceedings,
+author = {Karger, David},
+year = {1993},
+month = {01},
+pages = {21-30},
+title = {Global Min-cuts in $RNC$ and Other Ramifications of a Simple Mincut Algorithm},
+journal = {Proceedings of the Fourth Annual ACM-SIAM Symposium on Discrete Algorithms},
+doi = {10.1145/313559.313605}
+}
+
 @inbook{doi:10.1137/1.9781611977912.111,
 author = {Monika Henzinger and Jason Li and Satish Rao and Di Wang},
 title = {Deterministic Near-Linear Time Minimum Cut in Weighted Graphs},
@@ -8,4 +18,45 @@ doi = {10.1137/1.9781611977912.111},
 URL = {https://epubs.siam.org/doi/abs/10.1137/1.9781611977912.111},
 eprint = {https://epubs.siam.org/doi/pdf/10.1137/1.9781611977912.111},
     abstract = { Abstract In 1996, Karger [Kar96] gave a startling randomized algorithm that finds a minimum-cut in a (weighted) graph in time O(m log3 n) which he termed near-linear time meaning linear (in the size of the input) times a polylogarthmic factor. In this paper, we give the first deterministic algorithm which runs in near-linear time for weighted graphs. Previously, the breakthrough results of Kawarabayashi and Thorup [KT19] gave a near-linear time algorithm for simple graphs (which was improved to have running time O(m log2 n log log n) in [HRW20].) The main technique here is a clustering procedure that perfectly preserves minimum cuts. Recently, Li [Li21] gave an m1+o(1) deterministic minimum-cut algorithm for weighted graphs; this form of running time has been termed “almost-linear”. Li uses almost-linear time deterministic expander decompositions which do not perfectly preserve minimum cuts, but he can use these clusterings to, in a sense, “derandomize” the methods of Karger. In terms of techniques, we provide a structural theorem that says there exists a sparse clustering that preserves minimum cuts in a weighted graph with o(1) error. In addition, we construct it deterministically in near linear time. This was done exactly for simple graphs in [KT19, HRW20] and with polylogarithmic error for weighted graphs in [Li21]. Extending the techniques in [KT19, HRW20] to weighted graphs presents significant challenges, and moreover, the algorithm can only polylogarithmically approximately preserve minimum cuts. A remaining challenge is to reduce the polylogarithmic-approximate clusterings to 1 + o(1/ log n)-approximate so that they can be applied recursively as in [Li21] over O(log n) many levels. This is an additional challenge that requires building on properties of tree-packings in the presence of a wide range of edge weights to, for example, find sources for local flow computations which identify minimum cuts that cross clusters. }
+}
+
+@book{garey1979computers,
+  title={Computers and intractability},
+  author={Garey, Michael R and Johnson, David S},
+  volume={174},
+  year={1979},
+  publisher={freeman San Francisco}
+}
+
+@article{karger1996new,
+  title={A new approach to the minimum cut problem},
+  author={Karger, David R and Stein, Clifford},
+  journal={Journal of the ACM (JACM)},
+  volume={43},
+  number={4},
+  pages={601--640},
+  year={1996},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{karger2000minimum,
+  title={Minimum cuts in near-linear time},
+  author={Karger, David R},
+  journal={Journal of the ACM (JACM)},
+  volume={47},
+  number={1},
+  pages={46--76},
+  year={2000},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{stoer1997simple,
+  title={A simple min-cut algorithm},
+  author={Stoer, Mechthild and Wagner, Frank},
+  journal={Journal of the ACM (JACM)},
+  volume={44},
+  number={4},
+  pages={585--591},
+  year={1997},
+  publisher={ACM New York, NY, USA}
 }
