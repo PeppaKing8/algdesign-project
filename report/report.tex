@@ -1,5 +1,4 @@
 \documentclass[12pt]{article}
-
 % Packages
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -11,6 +10,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{pgfplots}
+\usepackage{lmodern}
 \pgfplotsset{compat=1.18}
 
 % Page layout
@@ -19,18 +19,25 @@
 % Header and Footer
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[C]{Survey of Randomized Techniques in Graph Algorithms}
+\fancyhead[C]{Randomized Techniques in Graph Algorithms}
 \fancyhead[R]{\thepage}
 
 % Title
-\title{Survey of Randomized Techniques in Graph Algorithms}
+\title{Randomized Techniques in Graph Algorithms}
 \author{
-    Wang Xianbang\thanks{Email: \texttt{wang-xb24@mails.tsinghua.edu.cn}} \\
-    IIIS, Tsinghua University
+    Xianbang Wang\thanks{Equal Contribution} \\
+    \fontsize{13}{12}\selectfont
+    IIIS, Tsinghua University \\
+    \fontsize{13}{12}\selectfont
+    \texttt{wang-xb24@mails.tsinghua.edu.cn}
     \and
-    Lu Yiyang\thanks{Email: \texttt{luyy24@mails.tsinghua.edu.cn}} \\
-    IIIS, Tsinghua University
+    Yiyang Lu\footnotemark[1] \\
+    \fontsize{13}{12}\selectfont
+    IIIS, Tsinghua University \\
+    \fontsize{13}{12}\selectfont
+    \texttt{luyy24@mails.tsinghua.edu.cn}
 }
+\date{}
 \newcommand{\descendants}[1]{#1^\downarrow}
 \newcommand{\ancestors}[1]{{#1}^\uparrow}
 \newcommand{\cutval}[1]{{\cal C}(#1)}
@@ -40,11 +47,11 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{definition}{Definition}[section]
 \begin{document}
-
 \maketitle
-% Abstract
 \begin{abstract}
-    This is a survey on randomized algorithms on graphs. We focus on two well-known problems: All Pairs Shortest Path (APSP) and Min Cut. We introduce the deterministic algorithms for these problems, and then present the randomized algorithms. We analyze the time complexity and success probability of the randomized algorithms, and provide experimental results. You can find the source code of the algorithms in \url{https://github.com/PeppaKing8/algdesign-project}.
+    This is a survey on randomized algorithms on graphs. We focus on two well-known problems: All Pairs Shortest Path (APSP) and Min Cut. We introduce the deterministic algorithms for these problems, and then present the randomized algorithms. We analyze the time complexity and success probability of the randomized algorithms, and provide experimental results. Based on the results, we discuss the practical significance of the randomized algorithms and discuss further improvements. We also propose an interesting problem in graph theory, which is related to the randomized algorithms we discussed.
+    
+    All the source code used in our implementation and evaluation can be found in \url{https://github.com/PeppaKing8/algdesign-project}.
 
     \textbf{Keywords:} Randomized Algorithms, Graph Theory, APSP, Min Cut
 \end{abstract}
