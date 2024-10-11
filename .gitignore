@@ -6,5 +6,5 @@ report/report.out
 report/report.bbl
 report/report.blg
 report/report.toc
-report/report.synctex.gz
+report/report.synctex*.gz
 .DS_Store
