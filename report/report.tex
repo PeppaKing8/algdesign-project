@@ -94,7 +94,7 @@ Now we introduce a randomized algorithm for APSP, which is based on matrix multi
 
 Given two $n\times n$ matrices $A$ and $B$, the product $C=AB$ is defined as $C_{ij}=\sum_{k=1}^n A_{ik}B_{kj}$. The naive algorithm has a time complexity of $O(n^3)$. The lower bound of matrix multiplication is obviously $\Omega(n^2)$, and computer scientists have been trying to find a better exponent $2<\alpha<3$ until now.
 
-Strassen proposed a divide-and-conquer algorithm in 1969, which has a time complexity of $O(n^{\log_2 7})\approx O(n^{2.81})$. According to Wikipedia, as of January 2024, the best peer-reviewed matrix multiplication algorithm is by Virginia Vassilevska Williams, Yinzhan Xu, Zixuan Xu, and Renfei Zhou and has complexity $O(n^{2.371552})$. It is still an open problem to find a matrix multiplication algorithm with complexity $O(n^{2+o(1)})$, or prove that such an algorithm does not exist.
+Strassen proposed a divide-and-conquer algorithm in 1969, which has a time complexity of $O(n^{\log_2 7})\approx O(n^{2.81})$. Strassen's algorithm is proved to be useful in real-life applications \cite{cite-key}, and can be parallelized to further improve performance \cite{CHOU199549}. According to Wikipedia, as of January 2024, the best peer-reviewed matrix multiplication algorithm is by Virginia Vassilevska Williams, Yinzhan Xu, Zixuan Xu, and Renfei Zhou and has complexity $O(n^{2.371552})$ \cite{williams2023newboundsmatrixmultiplication}. It is still an open problem to find a matrix multiplication algorithm with complexity $O(n^{2+o(1)})$, or prove that such an algorithm does not exist.
 
 \emph{From now on, suppose we have a matrix multiplication algorithm with time complexity $O(n^\nu)$.}
 
@@ -451,14 +451,31 @@ For the deterministic construction of $\mathcal{S}$, please refer to \cite{10.11
 
 \begin{lemma}
 \label{psr1}
-wo bing wang
+Suppose $c\ge 5$, $\epsilon=\dfrac{1}{2^{c+1}}$, $M=(\log n\cdot 2^{c+10})^2$. Then there exists a $c$-wise $\epsilon$-dependent set $\mathcal{S}$ of size $M$.
 \end{lemma}
 
 \begin{proof}
-wo jun shi
+Let every element in $\mathcal{S}$ be randomly chosen. We will prove that the probability that $\mathcal{S}$ is not $c$-wise $\epsilon$-dependent is less than $1$, which means there exists a set that satisfies the condition. Fix a subset $T$ of size $c$. The number of elements in $\mathcal{S}$ that have $(0,\cdots,0)$ in $T$, $k$, is sampled from $\text{Binomial}(M,2^{-c})$. Using Hoeffding's inequality, we have
+$$P(|k-\dfrac{M}{2^{c}}|>M\cdot \epsilon) \le \exp\{-2\epsilon^2 M\}.$$
+Applying union bound, the probability to fail is at most
+$$\exp\{-2\epsilon^2 M\}\cdot 2^c\cdot \dbinom{n}{c}\le \exp\{-2\epsilon^2M\}2^n/\epsilon.$$
+In order to let RHS smaller than $1$, we only need to have
+$$M\ge \dfrac{\log n-\log \epsilon}{2\epsilon^2}=(\log n+2c)2^{2c+1}\le (\log n\cdot 2^{c+10})^2,$$
+finishing the proof.
 \end{proof}
 
+\subsubsection{Directed Graph and Weighted Graph}
+
+We may have noticed that, the above algorithm applies only on unweighted graph. Which means, all weights in the graph must be 1. However, similar methods can be used to compute APSP in more general graphs. \cite{ALON1997255} devised an $O(n^{(3+\nu)/2}\log^3 n)$ algorithm to compute APSP($n,1$) - where every weight of an edge is $-1,0$, or $1$. For APSP($n,M$) ($|w|\le M$ for every weight $w$), we can simply expand every edge into $M$ edges, yielding an algorithm of time complexity $O(n^{(3+\nu)/2}M^{(3+\nu)/2}(\log^3 n+\log^3 M)).$
+
+For (unweighted) directed graph, \cite{zwick2000pairsshortestpathsusing} designed an algorithm, also based on matrix multiplication, that runs in $\tilde O(n^{2+1/(4-\nu)})$ time.
+
 \subsection{Open Problems}
+One would like to improve the time complexity for computing witness matrix. An open problem is, can we find a BPWM method that is $O(n^\nu)$? Alternatively, several open problems are still focusing on improving the best algorithms for $APSP(n, M)$, for directed or undirected graphs by improving the exponent or by improving the dependence on $M$.
+
+Furthermore, given the shortest distances, how hard is it to compute witnesses for the shortest paths? Possibly, this can be solved in $O(n^2)$ time, but all our algorithms need additional matrix multiplications.
+
+Still, computer scientists do not know whether there exists an APSP algorithm, either deterministic or randomized, that is $O(n^2)$. No stronger lower bound is proved - since this implies a stronger lower bound for matrix multiplication.
 \section{Min Cut}
 
 \subsection{Introduction}\

@@ -8,6 +8,74 @@ journal = {Proceedings of the Fourth Annual ACM-SIAM Symposium on Discrete Algor
 doi = {10.1145/313559.313605}
 }
 
+@article{CHOU199549,
+title = {Parallelizing Strassen's method for matrix multiplication on distributed-memory MIMD architectures},
+journal = {Computers and Mathematics with Applications},
+volume = {30},
+number = {2},
+pages = {49-69},
+year = {1995},
+issn = {0898-1221},
+doi = {https://doi.org/10.1016/0898-1221(95)00077-C},
+url = {https://www.sciencedirect.com/science/article/pii/089812219500077C},
+author = {C.-C. Chou and Y.-F. Deng and G. Li and Y. Wang},
+keywords = {Matrix multiplication, Parallel computation, Strassen's method},
+abstract = {We present a parallel method for matrix multiplication on distributed-memory MIMD architectures based on Strassen's method. Our timing tests, performed on a 56-node Intel Paragon, demonstrate the realization of the potential of the Strassen's method with a complexity of 4.7 M2.807 at the system level rather than the node level at which several earlier works have been focused. The parallel efficiency is nearly perfect when the processor number is the power of 7. The parallelized Strassen's method seems always faster than the traditional matrix multiplication methods whose complexity is 2M3 coupled with the BMR method and the Ring method at the system level. The speed gain depends on matrix order M: 20% for M ≈ 1000 and more than 100% for M ≈ 5000.}
+}
+
+@misc{williams2023newboundsmatrixmultiplication,
+      title={New Bounds for Matrix Multiplication: from Alpha to Omega}, 
+      author={Virginia Vassilevska Williams and Yinzhan Xu and Zixuan Xu and Renfei Zhou},
+      year={2023},
+      eprint={2307.07970},
+      archivePrefix={arXiv},
+      primaryClass={cs.DS},
+      url={https://arxiv.org/abs/2307.07970}, 
+}
+
+@article{cite-key,
+	abstract = {Strassen's algorithm for fast matrix-matrix multiplication has been implemented for matrices of arbitrary shapes on the CRAY-2 and CRAY Y-MP supercomputers. Several techniques have been used to reduce the scratch space requirement for this algorithm while simultaneously preserving a high level of performance. When the resulting Strassen-based matrix multiply routine is combined with some routines from the new LAPACK library, LU decomposition can be performed with rates significantly higher than those achieved by conventional means. We succeeded in factoring a 2048 ×2048 matrix on the CRAY Y-MP at a rate equivalent to 325 MFLOPS.},
+	author = {Bailey, David H. and Lee, King and Simon, Horst D.},
+	date = {1991/01/01},
+	date-added = {2024-10-12 21:06:12 +0800},
+	date-modified = {2024-10-12 21:06:12 +0800},
+	doi = {10.1007/BF00129836},
+	id = {Bailey1991},
+	isbn = {1573-0484},
+	journal = {The Journal of Supercomputing},
+	number = {4},
+	pages = {357--371},
+	title = {Using Strassen's algorithm to accelerate the solution of linear systems},
+	url = {https://doi.org/10.1007/BF00129836},
+	volume = {4},
+	year = {1991},
+	bdsk-url-1 = {https://doi.org/10.1007/BF00129836}}
+
+
+@misc{zwick2000pairsshortestpathsusing,
+      title={All Pairs Shortest Paths using Bridging Sets and Rectangular Matrix Multiplication}, 
+      author={Uri Zwick},
+      year={2000},
+      eprint={cs/0008011},
+      archivePrefix={arXiv},
+      primaryClass={cs.DS},
+      url={https://arxiv.org/abs/cs/0008011}, 
+}
+
+@article{ALON1997255,
+title = {On the Exponent of the All Pairs Shortest Path Problem},
+journal = {Journal of Computer and System Sciences},
+volume = {54},
+number = {2},
+pages = {255-262},
+year = {1997},
+issn = {0022-0000},
+doi = {https://doi.org/10.1006/jcss.1997.1388},
+url = {https://www.sciencedirect.com/science/article/pii/S002200009791388X},
+author = {Noga Alon and Zvi Galil and Oded Margalit},
+abstract = {The upper bound on the exponent,ω, of matrix multiplication over a ring that was three in 1968 has decreased several times and since 1986 it has been 2.376. On the other hand, the exponent of the algorithms known for the all pairs shortest path problem has stayed at three all these years even for the very special case of directed graphs with uniform edge lengths. In this paper we give an algorithm of timeO(nνlog3n),ν=(3+ω)/2, for the case of edge lengths in {−1, 0, 1}. Thus, for the current known bound onω, we get a bound on the exponent,ν<2.688. In case of integer edge lengths with absolute value bounded above byM, the time bound isO((Mn)νlog3n) and the exponent is less than 3 forM=O(nα), forα<0.116 and the current bound onω.}
+}
+
 @inbook{doi:10.1137/1.9781611977912.111,
 author = {Monika Henzinger and Jason Li and Satish Rao and Di Wang},
 title = {Deterministic Near-Linear Time Minimum Cut in Weighted Graphs},
