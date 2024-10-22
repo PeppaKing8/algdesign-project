@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
 % Packages
 \usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{amsthm}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -471,9 +472,9 @@ We may have noticed that, the above algorithm applies only on unweighted graph. 
 For (unweighted) directed graph, \cite{zwick2000pairsshortestpathsusing} designed an algorithm, also based on matrix multiplication, that runs in $\tilde O(n^{2+1/(4-\nu)})$ time.
 
 \subsection{Open Problems}
-One would like to improve the time complexity for computing witness matrix. An open problem is, can we find a BPWM method that is $O(n^\nu)$? Alternatively, several open problems are still focusing on improving the best algorithms for $APSP(n, M)$, for directed or undirected graphs by improving the exponent or by improving the dependence on $M$.
+An open problem is to further improve the time complexity for computing witness matrix. For instance, can we find a BPWM method that is $O(n^\nu)$? Alternatively, several open problems are still focusing on improving the best algorithms for $APSP(n, M)$, for directed or undirected graphs by improving the exponent or by improving the dependence on $M$.
 
-Furthermore, given the shortest distances, how hard is it to compute witnesses for the shortest paths? Possibly, this can be solved in $O(n^2)$ time, but all our algorithms need additional matrix multiplications.
+Furthermore, given the shortest distances, how hard is it to compute witnesses for the shortest paths? Possibly, this can be solved in $O(n^2)$ time, but all algorithms either need additional matrix multiplications or have a higher time complexity.
 
 Still, computer scientists do not know whether there exists an APSP algorithm, either deterministic or randomized, that is $O(n^2)$. No stronger lower bound is proved - since this implies a stronger lower bound for matrix multiplication.
 \section{Min Cut}
@@ -894,6 +895,73 @@ Despite the significant progress in algorithms for the Min Cut problem, several 
 \subsection{Exact Matching (EM)}
 
 \section{Our Proposed Problem: Optimal Point Traversing Path}
+
+\subsection{Problem Definition}
+
+Given a graph $G(V,E)$, and a set of points $P\subseteq V$, called \textbf{key points}, the \texttt{Minimum Point Traversing Path} problem is to find a path that traverses all points in $P$ \textbf{at least once}, such that the length of the path (number of edges) is minimized. 
+
+In fact, \texttt{MPTP} is NP-complete. We can prove \texttt{Hamiltonian-Path} $\le_P$ \texttt{MPTP} by setting $P=V$.
+
+An easier version of the problem is \texttt{Optimal Point Traversing Path (OPTP)}. For every $P'\subseteq V$, let $\xi(P')$ be minimum length of path that traverses all points in $P'$ at least once. For $1\le i\le n$, let
+$$\xi(i) = \max\limits_{|P'|=i} \xi(P').$$
+For an algorithm $\mathcal{A}$, given $G,P$, it can output a path of length $\mathcal{A}_P$. Let
+$$\xi_A(i) = \max\limits_{|P'|=i} \mathcal{A}_{P'}.$$
+The \texttt{OPTP} problem requires to find an algorithm $\mathcal{A}$, such that
+$$\lim\limits_{|V|\to \infty} \dfrac{\xi_A(f(|V|))}{\xi(f(|V|))}=1.$$
+$f$ is an arbitrary non-decreasing function. In the following discussion, we assume $f(x)=\lceil\sqrt{x}\rceil$. Note that the choice of $f$ does not affect the difficulty of the problem - when $|V|$ increases but $i$ stays the same, the problem becomes strictly harder.
+
+The intuition is, for a large graph, given a set of key points $P$, we can always find a path traversing all points in $P$ with a reasonable length, which means it is not longer than the optimal solution in the worst case. 
+
+In real life scenarios, the key points may represent the user's location. The edges are the roads. Imagine a courier want to deliver packages to all the users, he need to traverse these points at least once. In order to handle the worst serving efficiency, one need to minimize the maximum possible length, which is lower bounded by the optimal solution in the worst case. So, \texttt{OPTP} is a reasonable model for real life applications.
+
+\subsection{A Linear Algorithm On a Special Case: Grid Graph}
+
+Since we model the key points to be the user's location, and the graph to be the road, one may consider the graph to be a \textbf{grid graph}. Formally, given an positive integer $n$, a grid graph is a graph $G_n$ with $n^2$ vertices, which are arranged in a $n\times n$ grid. Each vertex is connected to its adjacent vertices in the grid, i.e. the vertex $(i,j)$ is connected to $(i\pm 1,j)$ and $(i,j\pm 1)$.
+
+With the supposition above, we can assume the key point set $|P|=n$, which is a sensible assumption.
+
+Now consider the worst case $\xi(n)$. 
+
+\begin{lemma}
+\label{hahaha1}
+For every positive integer $n$, we have $\xi(n+1)\ge \sqrt{2}n^{3/2}-10n$.
+\end{lemma}
+\begin{proof}
+Let the grid
+$$V(G_{n+1})=\{(i,j):0\le i,j\le n,\ i,j\in \mathbb{Z}\}.$$
+For any point $X\in [0,n]^2$, let $f(X)$ be the point $v\in V$ that is the closest to $X$ (w.r.t. Manhattan distance: $d(\mathbf{x},\mathbf{y})=|x_1-x_2|+|y_1-y_2|$).
+
+Let $M=\lfloor \sqrt\frac{n}{2}\rfloor$. Let
+$$S=\left\{\left(\dfrac{s\sqrt{n}}{\sqrt{2}},\dfrac{t\sqrt{n}}{\sqrt{2}}\right):s,t\in \mathbb{N},\ s+t\equiv 1\pmod 2,\ s,t\le 2M\right\}.$$
+Since $\sqrt{2}M\le \sqrt{n}$, we have
+$$\dfrac{s\sqrt{n}}{\sqrt{2}},\dfrac{t\sqrt{n}}{\sqrt{2}}\le \sqrt{2}M\sqrt{n}\le n,$$
+which means $S\subseteq [0,n]^2$. Furthermore,
+$$|S|=2M^2\le 2\cdot \left(\sqrt{\dfrac{n}{2}}\right)^2=n,$$
+and
+$$|S|=2M^2\ge 2\cdot \left(\sqrt{\dfrac{n}{2}}-1\right)^2\ge n-4\sqrt{n}+1.$$
+Obviously, for any $A,B\in S$, we have $d(A,B)\ge \sqrt{2n}$. Thus, for every $X\in S$, we add $f(X)$ into $P$. Since $|S|\le n$, we have $|P|\le n$ (Note that a smaller $|P|$ means a smaller answer). Since for every $X\in [0,n]^2$, $d(X,f(X))\le 1$, we have
+$$d(X,Y)\ge \sqrt{2n}-2,\quad \forall X,Y\in P.$$
+Thus, the minimal length of the traversing path is at least
+$$(\sqrt{2n}-2)(|S|-1)\ge (\sqrt{2n}-2)(n-4\sqrt{n})\ge \sqrt{2}\cdot n^{3/2}-10n.$$
+\end{proof}
+
+Now we give an algorithm $A$, that runs in $o(n^2)=o(|V|)$ time, to solve \texttt{OPTP} on $G_{n+1}$. Using Lemma \ref{hahaha1}, we only need to show that $A$ outputs a path of length at most $\sqrt{2}n^{3/2}+10n$ in every case.
+
+\begin{definition}
+    \label{def5.1}
+A process of \textbf{traversing $[l,r)$ from left to right} is to visit all vertices in $P\cap ([l,r)\times [0,n])$ by the increasing order of $x$-coordinate. Specifically: suppose $P\cap ([l,r)\times [0,n))=\{v_1,v_2,\ldots,v_k\}$, with
+$$x_{v_1}\le x_{v_2}\le \cdots\le x_{v_k},$$
+where $x_{v}(v\in V)$ is the $x$-coordinate of $v$ in the grid. We start on point $(l,0)$, and visit $v_1,v_2,\ldots,v_k$ in order, and finally reach $(r,n)$. When visiting, we always choose the shortest path to the next point.
+\end{definition}
+
+Similarly, we can define a ``reverse'' process:
+\begin{definition}
+A process of \textbf{traversing $[l,r)$ from right to left} is defined as: suppose $P\cap ([l,r)\times [0,n))=\{v_1,v_2,\ldots,v_k\}$ in the same order in \ref{def5.1}. We start on point $(l,n)$, visit $v_k,v_{k-1},\ldots,v_1$ in order, and finally reach $(r,0)$.
+\end{definition}
+
+Now, we want to divide $[0,n]$ into some intervals $[l_i,r_i)$, satisfying $l_i=r_{i-1}$, and perform the following process one-by-one: traversing $[l_1,r_1)$ from left to right; traversing $[l_2,r_2)$ from right to left; traversing $[l_3,r_3)$ from left to right; and so on. 
+
+Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<S$ with equal probability, and set all $l_i=b+iT$ and $r_i=b+(i+1)T$. This is the algorithm $A$. Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$.
 
 \bibliographystyle{plain} % or any other style you prefer
 \bibliography{citation}
