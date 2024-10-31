@@ -1,6 +1,7 @@
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
 % Packages
 \usepackage{amsmath}
+\usepackage{fullpage}
 \usepackage{amsfonts}
 \usepackage{amsthm}
 \usepackage{graphicx}
@@ -904,6 +905,118 @@ By addressing these problems, researchers can further advance the state of the a
 
 \subsection{Minimum Spanning Tree (MST)}
 
+\subsubsection{Introduction}
+
+The Minimum Spanning Tree (MST) problem is another classic problem in graph theory that involves finding a spanning tree of minimum weight in a connected, undirected graph. The problem is defined as follows:
+
+\begin{definition}
+    Given an undirected graph $G=(V,E)$ with edge weights $w:E\to \mathbb{R}$, the Minimum Spanning Tree problem is to find a spanning tree $T$ of $G$ that minimizes the sum of the edge weights in $T$.
+\end{definition}
+
+The MST problem has many practical applications, such as in network design, clustering, and optimization. Several algorithms have been developed to solve the MST problem efficiently, including Prim's algorithm, Kruskal's algorithm, and Boruvka's algorithm. An famous open problem is how to solve MST in linear time. In this section, we will introduce a Linear Time Randomized Algorithm for MST.
+
+\subsubsection{Boruvka's Algorithm}
+
+Let's start with a particular greedy strategy for the MST problem, known as Boruvka's algorithm\cite{nevsetvril2001otakar}. The algorithm works as follows:
+\newline
+\begin{algorithm}
+\caption{Boruvka's Algorithm for MST}
+\label{alg:boruvka}
+\begin{algorithmic}
+    \STATE \textbf{Input:} Graph $G=(V,E)$ with edge weights $w:E\to \mathbb{R}$
+    \STATE \textbf{Output:} Minimum Spanning Tree $T$
+    \STATE Initialize $T$ to be an empty set
+    \WHILE{$T$ is not a spanning tree}
+        \STATE For each connected component $C$ of $T$, find the minimum-weight edge $e$ with exactly one endpoint in $C$
+        \STATE Add $e$ to $T$
+    \ENDWHILE
+    \RETURN $T$
+\end{algorithmic}
+\end{algorithm}
+
+Boruvka's algorithm is a simple and efficient algorithm for finding the MST of a graph. It works by iteratively adding the minimum-weight edge that connects two connected components of the current spanning tree. The algorithm terminates when the spanning tree is fully connected, i.e., when there is only one connected component. The key observation here is MST for $G$ must contain the edge $(v,w)$ which is the minimum-weight edge incident on $v$.
+
+Boruvka's algorithm reduces MST problem in an $n$-vertex graph with $m$ edges to MST problem in a graph with at most $\frac{n}{2}$ vertices and $m$ edges in $O(m+n)$-time. The worst-case time complexity is $O(m\log n)$.
+
+\subsubsection{Light and Heavy Edges}
+
+Before introducing the Linear Time Randomized Algorithm for MST, we first introduce concepts called \textit{light edge} and \textit{heavy edge}.
+
+\begin{definition}
+    Given a graph $G=(V,E)$ with edge weights $w:E\to \mathbb{R}$, fix a forest $F$ of $G$. $w_F(u,v)$ is the maximum weight of an edge on the path from $u$ to $v$ in $F$ if exists, and set to be $\infty$ when $u$ and $v$ are disconnected in $F$. An edge $e\in E$ is said to be $F$-\textit{heavy} if $w(u,v)>w_F(u,v)$. Otherwise, it is $F$-\textit{light}.
+\end{definition}
+
+It's easy to check all edges in $F$ are $F$-light. The following lemma is a direct consequence of the definition:
+
+\begin{lemma}
+    Let $F$ be any forest in the graph $G$. If an edge $(u,v)$ is $F$-heavy, then it is not in the MST of $G$.
+\end{lemma}
+
+The idea to define light and heavy edges is to improve a forest $F$. Specifically, adding an edge $e$ to $F$ will reduce the number of connected components in $F$, or generate a cycle in $F$ such that we can remove the edge of largest weight in the cycle. An $F$-light edge is a candidate to be added to $F$ to improve it, while an $F$-heavy edge is not. Based on this observation, a tree $T$ is a MST if and only if it is a forest such that all $T$-light edges are in $T$.
+
+The idea to define light and heavy edges is to improve a forest $F$. Specifically, adding an edge $e$ to $F$ will reduce the number of connected components in $F$, or generate a cycle in $F$ such that we can remove the edge of largest weight in the cycle. An $F$-light edge is a candidate to be added to $F$ to improve it, while an $F$-heavy edge is not. Based on this observation, a tree $T$ is a MST if and only if it is a forest such that all $T$-light edges are in $T$. So we can verify whether a tree is a MST by checking whether all its edges are light. In fact, the following theorem holds:
+
+\begin{theorem}
+    \label{theorem:heavy}
+    Given a graph $G$ and a forest $F$, all $F$-heavy edges in $G$ can be identified in $O(m+n)$ time.
+\end{theorem}
+\begin{proof}
+    First, we preprocess the forest $F$ to answer Least Common Ancestor (LCA) queries efficiently. This can be done using techniques like Binary Lifting or Euler Tour with RMQ, both of which take $O(n)$ time for preprocessing and $O(1)$ time per query\cite{bender2000lca}. After building the LCA data structure, using the algorithm proposed by Tarjan\cite{doi:10.1137/0221070} to compute the maximum edge weight on the path between any two vertices in $F$ in $O(n+m)$ time. The overall time complexity is $O(n + m)$ for identifying all $F$-heavy edges given the forest $F$.
+\end{proof}
+
+\subsubsection{Linear Time Randomized Algorithm for MST}
+
+Based on the algorithm above, we can use random sampling to identify and eliminate heavy edges in MST. Consider a random graph $G(p)$ obtained by independently including each edge of $G$ in $G(p)$ with probability $p$. The connectivity of $G(p)$ is not guaranteed. The linear time randomized algorithm for MST is based on the following lemma:
+
+\begin{lemma}
+    \label{lemma:randomizedmst}
+    Let $F$ be the minimum sppanning forest in the random graph $G(p)$. Then the number of $F$-light edges in $G$ is stochastically dominated by a random variable $X$ that has negative binomial distribution with parameters $n$ and $p$. In particular, the expected number of $F$-light edges in $G$ is at most $\frac{n}{p}$.
+\end{lemma}
+\begin{proof}
+    Consider following process: sort edges of $G$ in the order of increasing weight, construct $G(p)$ by including each edge in this order with probability $p$. The minimum spanning forest of $G(p)$ can be constructed during the process. The edge is added to $F$ if and only if the two endpoints $u$ and $v$ belong to different connected components of $F$. The observations are:
+    \begin{enumerate}
+        \item edges are never removed from $F$ during this process.
+        \item the $F$-lightness of $e_i$ only depends on the connected components of $F$ after $e_i$ is added to $F$.
+        \item the edge $e_i$ is $F$-light finally if and only if it's $F$-light when it's added to $F$.
+    \end{enumerate}
+    Define phase $k$ as starting after forest $F$ has $k-1$ edges and end when $F$ has $k$ edges. The number of $F$-light edges considered during this phase has geometric distribution with parameter $p$. Suppose $F$ grows in size from 0 to $s$. The number of $F$-light edges considered during this process is sum of $s$ independent geometric random variables with parameter $p$.
+
+    To compute the $F$-light edges processed after but not chosen in $G(p)$, we can continue flipping coins until we have $n$ successes. The number of failures before the $n$-th success is a negative binomial random variable with parameters $n$ and $p$\footnote{The negative binomial distribution is the distribution of the number of failures before the $n$-th success in a sequence of independent Bernoulli trials.}. 
+
+    Since $s$ is at most $n-1$, the number of $F$-light edges is stochastically dominated by a negative binomial distribution with parameters $n$ and $p$. The expected number of $F$-light edges is at most $\frac{n}{p}$.
+\end{proof}
+
+Based on this, we propose the following Linear Time Randomized Algorithm for MST\cite{karger1995randomized}:
+
+\begin{algorithm}
+    \caption{Linear Time Randomized Algorithm for MST}
+    \begin{algorithmic}
+    \label{alg:randomizedmst}
+    \STATE \textbf{Input:} Undirected Weighted Graph $G=(V,E)$ with edge weights $w:E\to \mathbb{R}$
+    \STATE \textbf{Output:} Minimum Spanning Tree $T$
+    \STATE Using three applications of Boruvka's phases interleaved with simplification of the contracted graphs, compute a graph $G_1$ with at most $\frac{n}{8}$ vertices and let $C$ be the set of edges contracted during the three phases. If $G$ is empty then exit and return $F=C$.
+    \STATE Let $p=\frac{1}{2}$ and let $G_2=G_1(p)$ be a randomly sampled subgraph of $G_1$.
+    \STATE Recursively applying algorithm MST, compute the minimum spanning forest $F_2$ of $G_2$.
+    \STATE Using a linear-time verification algorithm, identify the $F_2$-heavy edges in $G_1$, delete them to obtain a graph $G_3$.
+    \STATE Recursively applying algorithm MST, compute the minimum spanning forest $F_3$ for graph $G_3$.
+    \RETURN $C\cup F_3$
+    \end{algorithmic}
+\end{algorithm}
+
+Since all $F_2$-heavy edges are impossible to be included in the MST by Theorem \ref{theorem:heavy}, we can safely remove them from $G_1$ to obtain $G_3$. The correctness of the algorithm is based on this. The time complexity of the algorithm is guaranteed by the following theorem:
+
+\begin{theorem}
+    The expected running time of Algorithm \ref{alg:randomizedmst} is $O(m+n)$.
+\end{theorem}
+\begin{proof}
+    Define $T(n,m)$ as the expected running time of Algorithm \ref{alg:randomizedmst} on graphs with $n$ vertices and $m$ edges. Boruvka's algorithm takes $O(m+n)$ time, and produce a graph $G_1$ with at most $\frac{n}{8}$ vertices and $m$ edges. Random sampling to produce $G_2=G_1(\frac{1}{2})$ with $\frac{n}{8}$ vertices and an expected number of edges equal to $\frac{m}{2}$, which takes $O(m+n)$ time. Finding the minimum spanning forest $G_2$ has expected cost $T(\frac{n}{8},\frac{m}{2})$, by induction and linearity of expectation.
+
+    The verification to identify $F_2$-heavy edges in $G_1$ takes $O(m+n)$ time using \ref{theorem:heavy}. By Lemma \ref{lemma:randomizedmst}, the expected number of $F_2$-light edges in $G_1$ is at most $\frac{n}{4}$. Finding the MST of $G_3$ has expected cost $T(\frac{n}{8},\frac{n}{4})$, return the union of $C$ and the MST of $G_3$ takes $O(m+n)$ time. Putting all together, we have
+    \begin{align*}
+        T\left(n,m\right)\leq T\left(\frac{n}{8},\frac{m}{2}\right)+T\left(\frac{n}{8},\frac{n}{4}\right)+c\left(m+n\right)
+    \end{align*}
+    for some constant $c$. The solution to this recurrence is $O(m+n)$, hence the expected running time of Algorithm \ref{alg:randomizedmst} is $O(m+n)$.
+\end{proof}
 \subsection{Exact Matching (EM)}
 
 \section{Our Proposed Problem: Optimal Point Traversing Path}
@@ -976,5 +1089,5 @@ Now, we want to divide $[0,n]$ into some intervals $[l_i,r_i)$, satisfying $l_i=
 Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<S$ with equal probability, and set all $l_i=b+iT$ and $r_i=b+(i+1)T$. This is the algorithm $A$. Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$.
 
 \bibliographystyle{plain} % or any other style you prefer
-\bibliography{citation}
+\bibliography{references} % use the .bib file
 \end{document}
