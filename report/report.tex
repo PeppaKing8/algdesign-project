@@ -235,11 +235,11 @@ If we have missed some witness (which is very unlucky), we found these missing w
 
 In practice, we set $L=\gamma\log n$, where $\gamma$ is a constant. We pick $\gamma=3$ in practice, considering the trade-off between time complexity and success probability. 
 
-The whole algorithm (APSP) is shown in Algorithm \ref{alg:BPWM}. The black box \texttt{BPWM} is implemented in Algorithm \ref{alg:bp}.
+The whole algorithm (APSP) is shown in Algorithm \ref{alg:APSP}. The black box \texttt{BPWM} is implemented in Algorithm \ref{alg:BPWM}.
 
 \begin{algorithm}
     \caption{APSP}
-    \label{alg:BPWM}
+    \label{alg:APSP}
     \begin{algorithmic}
         \STATE \textbf{Input:} Graph $G=(V,E)$ with adjacency matrix $A$
         \STATE \textbf{Output:} Successor matrix $S$
@@ -260,7 +260,7 @@ The whole algorithm (APSP) is shown in Algorithm \ref{alg:BPWM}. The black box \
 
 \begin{algorithm}
     \caption{BPWM}
-    \label{alg:bp}
+    \label{alg:BPWM}
     \begin{algorithmic}
         \STATE \textbf{Input:} 0-1 matrices $A,B$ of size $n\times n$
         \STATE \textbf{Output:} Witness matrix $W$
@@ -290,7 +290,7 @@ The whole algorithm (APSP) is shown in Algorithm \ref{alg:BPWM}. The black box \
 
 \paragraph{BPWM} Consider $(t,l)$, we have $O(\log n\cdot \log n)=O(\log^2 n)$ pairs. For every pair, we need to compute $W^{\#}$, which takes $O(n^{\nu})$ time. Other procedures take $O(n^2)$ time. So the time complexity of BPWM is $O(n^{\nu}\log^2 n)$.
 
-\paragraph{APSP} APSP calls APD and BPWM for constant times, so the time complexity is $O(n^{\nu}\log^2 n)$.
+\paragraph{APSP} APSP \ref{alg:APSP} calls APD \ref{alg:example} and BPWM \ref{alg:BPWM} for constant times, so the time complexity is $O(n^{\nu}\log^2 n)$.
 
 \subsubsection{Small Improvement}
 \label{imp}\
@@ -519,7 +519,7 @@ In this report, we will focus on the Sequential Model since it is the most commo
 
 Now we introduce a randomized algorithm for Min Cut, which is based on Karger's algorithm\cite{inproceedings}. The algorithm is proposed by Karger and Stein in 1996\cite{karger1996new}.
 
-The randomized algorithm of Min Cut is a \textbf{Monte Carlo} algorithm, which runs in $O(cn^2\log^2 n)$ time with a failure probability of $O(1/n^c)$, where $c$ is any constant. As we can see, the algorithm can achieve near optimal time complexity with a very low failure probability.
+The randomized algorithm of Min Cut is a \textbf{Monte Carlo} algorithm, which means that the algorithm may output a wrong answer with a small probability. However, the probability of failure can be reduced exponentially by repeating the algorithm for multiple times. It runs in $O(cn^2\log^2 n)$ time with a failure probability of $O(1/n^c)$, where $c$ is any constant. As we can see, the algorithm can achieve near optimal time complexity with a very low failure probability.
 
 The algorithm is based on the following procedure:
 \subsubsection{Contract}
@@ -897,7 +897,13 @@ Combine Lemma \ref{lemma:respect} with Lemma \ref{lemma:2respect}, we know the m
 
 \subsection{Open Problems}
 
-Despite the significant progress in algorithms for the Min Cut problem, several open problems remain. One major challenge is to develop faster algorithms with better approximation guarantees. Another open problem is to extend these algorithms to handle dynamic graphs, where the graph structure changes over time. Additionally, finding efficient parallel and distributed algorithms for the Min Cut problem is an important area of research, especially given the increasing size of real-world graphs. Besides, find faster algorithms with improved approximation factors for variations like multi-way cut, multi-cut and edge connectivity augmentation is also an open problem.
+Despite the significant progress in algorithms for the Min Cut problem, several open problems remain. We highlight some of the key challenges and directions for future research:
+\begin{enumerate}
+    \item \textbf{Improved Approximation Algorithms:} Develop faster algorithms with better approximation guarantees, especially for graphs with specific structures or properties
+    \item \textbf{Dynamic Graphs:} Extend these algorithms to handle dynamic graphs, where the graph structure changes over time
+    \item \textbf{Parallel and Distributed Algorithms:} Finding efficient parallel and distributed algorithms for the Min Cut problem is an important area of research, especially given the increasing size of real-world graphs
+    \item \textbf{Generalizations and Variants:} Explore generalizations and variants of the Min Cut problem, such as weighted graphs, directed graphs, and multi-way cuts
+\end{enumerate}
 
 By addressing these problems, researchers can further advance the state of the art in algorithms for the Min Cut problem.
 
@@ -917,7 +923,7 @@ The MST problem has many practical applications, such as in network design, clus
 
 \subsubsection{Boruvka's Algorithm}
 
-Let's start with a particular greedy strategy for the MST problem, known as Boruvka's algorithm\cite{nevsetvril2001otakar}. The algorithm works as follows:
+Let's start with a particular greedy strategy for the MST problem, known as Boruvka's algorithm. The algorithm works as follows:
 \newline
 \begin{algorithm}
 \caption{Boruvka's Algorithm for MST}
@@ -1017,6 +1023,19 @@ Since all $F_2$-heavy edges are impossible to be included in the MST by Theorem 
     \end{align*}
     for some constant $c$. The solution to this recurrence is $O(m+n)$, hence the expected running time of Algorithm \ref{alg:randomizedmst} is $O(m+n)$.
 \end{proof}
+
+\subsubsection{Open Problems}
+
+Despite significant advancements in algorithms for the Minimum Spanning Tree problem, several open problems remain:
+
+\begin{enumerate}
+    \item \textbf{Linear Time Deterministic MST Algorithms:} While randomized algorithms, like Karger's, achieve near-linear time complexity, it is still an open question whether a deterministic linear-time algorithm exists for finding the MST in undirected, weighted graphs. Achieving this would be a major breakthrough, especially in deterministic graph processing.
+    \item \textbf{MST in Hypergraphs:} Extending the MST problem to hypergraphs, where edges can connect more than two vertices, is less understood and lacks efficient algorithms. The MST definition in hypergraphs is not as straightforward as in regular graphs, and finding optimal algorithms for this generalization, including approximation methods, remains an open question.
+    \item \textbf{Streaming MST} In streaming settings, where edges are processed sequentially due to memory constraints, designing efficient algorithms to compute or approximate the MST is challenging. The open problem here is to find single-pass, memory-efficient algorithms that can construct the MST or approximate it closely with minimal space usage, especially for massive graphs.
+\end{enumerate}
+
+By addressing these open problems, researchers can further advance the SOTA in algorithms for the Minimum Spanning Tree problem and its generalizations.
+
 \subsection{Exact Matching (EM)}
 
 \section{Our Proposed Problem: Optimal Point Traversing Path}
