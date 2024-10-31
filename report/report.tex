@@ -504,6 +504,16 @@ Fortunately, using \textbf{Stoer-Wagner}\cite{stoer1997simple} algorithm, the $n
 
 Using a more sophisticated algorithm, we can achieve a lower time complexity. In 2024, the \textbf{SOTA}\cite{doi:10.1137/1.9781611977912.111} of deterministic algorithm of Min Cut runs in $\tilde{O}(n^2)$ time, which is near optimal (since the input size is $\Omega(n+m)$, which is $\Omega(n^2)$ in the worst case).
 
+The computation model introduced above is based on \textbf{Sequential Model}, which is standard unit-cost RAM model. Besides, there are more computation model of Min Cut and corresponding SOTA\footnote{The statistics here consider randomized algorithm and corresponding complexity requires high probability.} as following:
+\begin{enumerate}
+    \item \textbf{Cut Query}: Allowed to query arbitrary cuts of $G$, charged once for each query. The SOTA is $\tilde{O}(n^2)$\cite{mukhopadhyay2020weighted}.
+    \item \textbf{Parallel RAM}: Concurrent read exclusive write PRAM model. The complexity consists of time complexity and work complexity, where work complexity equals to the sum of time complexity of all processors. The SOTA is $O(m\log n)$ work and $O(\log^3 n)$ time\cite{anderson2023parallel}.
+    \item \textbf{Dynamic semi-streaming}: Allowed to use $O(n\text{poly}\log n)$ bits of internal memory, charged once per pass. The SOTA is using 2 passes with $O(n\log n)$ bits of memory\cite{assadi2021simple}.
+    \item \textbf{Distributed CONGEST}: You can only communicate with neighbors in a synchronous network. The bandwith is restricted with $O(\log n)$ bits per round. The complexity charged once per round. The SOTA is $\tilde{O}(\sqrt{n}+D)$ rounds for graph with diameter $D$\cite{dory2021distributed}.
+\end{enumerate}
+
+In this report, we will focus on the Sequential Model since it is the most common computation model in practice. We will introduce the randomized algorithms of Min Cut based on this.
+
 \subsection{Karger-Stein Algorithm}\
 
 Now we introduce a randomized algorithm for Min Cut, which is based on Karger's algorithm\cite{inproceedings}. The algorithm is proposed by Karger and Stein in 1996\cite{karger1996new}.
@@ -856,37 +866,39 @@ Combine Lemma \ref{lemma:respect} with Lemma \ref{lemma:2respect}, we know the m
     Given any weighted undirected graph $G$, the minimum cut can be found in $O(cn^2\log n)$ time with a failure probability of $O(1/n^c)$ using a Monte Carlo algorithm.
 \end{theorem}
 
-\subsection{Advanced Algorithm}
+% \subsection{Advanced Algorithm}
 
-In recent years, there have been several advancements in the algorithms for the Min Cut problem. One notable approach is the use of spectral techniques and semidefinite programming (SDP). These methods leverage the properties of the graph's Laplacian matrix and eigenvalues to find approximate solutions to the Min Cut problem.
+% In recent years, there have been several advancements in the algorithms for the Min Cut problem. One notable approach is the use of spectral techniques and semidefinite programming (SDP). These methods leverage the properties of the graph's Laplacian matrix and eigenvalues to find approximate solutions to the Min Cut problem.
 
-\paragraph{Spectral Methods}
+% \paragraph{Spectral Methods}
 
-Spectral methods involve the use of the graph Laplacian matrix, which is defined as $L = D - A$, where $D$ is the degree matrix and $A$ is the adjacency matrix. The eigenvalues and eigenvectors of the Laplacian matrix provide valuable information about the graph's structure. The second smallest eigenvalue, known as the Fiedler value, and its corresponding eigenvector, the Fiedler vector, can be used to partition the graph into two sets, providing an approximation to the Min Cut.
+% Spectral methods involve the use of the graph Laplacian matrix, which is defined as $L = D - A$, where $D$ is the degree matrix and $A$ is the adjacency matrix. The eigenvalues and eigenvectors of the Laplacian matrix provide valuable information about the graph's structure. The second smallest eigenvalue, known as the Fiedler value, and its corresponding eigenvector, the Fiedler vector, can be used to partition the graph into two sets, providing an approximation to the Min Cut.
 
-\paragraph{Semidefinite Programming}
+% \paragraph{Semidefinite Programming}
 
-Semidefinite programming (SDP) is a powerful optimization technique that can be used to approximate the Min Cut problem. The Goemans-Williamson algorithm is a well-known SDP-based approximation algorithm for the Max Cut problem, which can be adapted for the Min Cut problem. The algorithm involves solving an SDP relaxation of the Min Cut problem and then using a randomized rounding technique to obtain a cut.
+% Semidefinite programming (SDP) is a powerful optimization technique that can be used to approximate the Min Cut problem. The Goemans-Williamson algorithm is a well-known SDP-based approximation algorithm for the Max Cut problem, which can be adapted for the Min Cut problem. The algorithm involves solving an SDP relaxation of the Min Cut problem and then using a randomized rounding technique to obtain a cut.
 
-\begin{algorithm}
-\caption{Goemans-Williamson Algorithm for Min Cut}
-\label{alg:goemans-williamson}
-\begin{algorithmic}
-    \STATE \textbf{Input:} Graph $G=(V,E)$ with adjacency matrix $A$
-    \STATE \textbf{Output:} Approximate Min Cut $(S, V \setminus S)$
-    \STATE Solve the SDP relaxation of the Min Cut problem to obtain a matrix $X$
-    \STATE Perform Cholesky decomposition on $X$ to obtain a matrix $L$
-    \STATE Randomly choose a vector $r$ from a Gaussian distribution
-    \STATE Compute the cut $(S, V \setminus S)$ by partitioning the vertices based on the sign of the dot product of their corresponding rows in $L$ with $r$
-    \RETURN $(S, V \setminus S)$
-\end{algorithmic}
-\end{algorithm}
+% \begin{algorithm}
+% \caption{Goemans-Williamson Algorithm for Min Cut}
+% \label{alg:goemans-williamson}
+% \begin{algorithmic}
+%     \STATE \textbf{Input:} Graph $G=(V,E)$ with adjacency matrix $A$
+%     \STATE \textbf{Output:} Approximate Min Cut $(S, V \setminus S)$
+%     \STATE Solve the SDP relaxation of the Min Cut problem to obtain a matrix $X$
+%     \STATE Perform Cholesky decomposition on $X$ to obtain a matrix $L$
+%     \STATE Randomly choose a vector $r$ from a Gaussian distribution
+%     \STATE Compute the cut $(S, V \setminus S)$ by partitioning the vertices based on the sign of the dot product of their corresponding rows in $L$ with $r$
+%     \RETURN $(S, V \setminus S)$
+% \end{algorithmic}
+% \end{algorithm}
 
-These advanced algorithms provide approximate solutions to the Min Cut problem with provable guarantees on the quality of the solution. While they may not always find the exact Min Cut, they are often much faster than exact algorithms, especially for large graphs.
+% These advanced algorithms provide approximate solutions to the Min Cut problem with provable guarantees on the quality of the solution. While they may not always find the exact Min Cut, they are often much faster than exact algorithms, especially for large graphs.
 
 \subsection{Open Problems}
 
-Despite the significant progress in algorithms for the Min Cut problem, several open problems remain. One major challenge is to develop faster algorithms with better approximation guarantees. Another open problem is to extend these algorithms to handle dynamic graphs, where the graph structure changes over time. Additionally, finding efficient parallel and distributed algorithms for the Min Cut problem is an important area of research, especially given the increasing size of real-world graphs.
+Despite the significant progress in algorithms for the Min Cut problem, several open problems remain. One major challenge is to develop faster algorithms with better approximation guarantees. Another open problem is to extend these algorithms to handle dynamic graphs, where the graph structure changes over time. Additionally, finding efficient parallel and distributed algorithms for the Min Cut problem is an important area of research, especially given the increasing size of real-world graphs. Besides, find faster algorithms with improved approximation factors for variations like multi-way cut, multi-cut and edge connectivity augmentation is also an open problem.
+
+By addressing these problems, researchers can further advance the state of the art in algorithms for the Min Cut problem.
 
 \section{Other Related Problems}
 
