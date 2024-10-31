@@ -926,7 +926,7 @@ The intuition is, for a large graph, given a set of key points $P$, we can alway
 
 In real life scenarios, the key points may represent the user's location. The edges are the roads. Imagine a courier want to deliver packages to all the users, he need to traverse these points at least once. In order to handle the worst serving efficiency, one need to minimize the maximum possible length, which is lower bounded by the optimal solution in the worst case. So, \texttt{OPTP} is a reasonable model for real life applications.
 
-\subsection{A Linear Algorithm On a Special Case: Grid Graph}
+\subsection{A Sublinear Algorithm On a Special Case: Grid Graph}
 
 Since we model the key points to be the user's location, and the graph to be the road, one may consider the graph to be a \textbf{grid graph}. Formally, given an positive integer $n$, a grid graph is a graph $G_n$ with $n^2$ vertices, which are arranged in a $n\times n$ grid. Each vertex is connected to its adjacent vertices in the grid, i.e. the vertex $(i,j)$ is connected to $(i\pm 1,j)$ and $(i,j\pm 1)$.
 
@@ -957,7 +957,7 @@ Thus, the minimal length of the traversing path is at least
 $$(\sqrt{2n}-2)(|S|-1)\ge (\sqrt{2n}-2)(n-4\sqrt{n})\ge \sqrt{2}\cdot n^{3/2}-10n.$$
 \end{proof}
 
-Now we give an algorithm $A$, that runs in $O(n^2)=O(|V|)$ time, to solve \texttt{OPTP} on $G_{n+1}$. Using Lemma \ref{hahaha1}, we only need to show that $A$ outputs a path of length at most $\sqrt{2}n^{3/2}+10n$ in every case.
+Now we give an algorithm $A$, that runs in $o(n^2)=o(|V|)$ time (i.e. \textbf{sublinear}), to solve \texttt{OPTP} on $G_{n+1}$. Using Lemma \ref{hahaha1}, we only need to show that $A$ outputs a path of length at most $\sqrt{2}n^{3/2}+10n$ in every case.
 
 \begin{definition}
     \label{def5.1}
@@ -973,9 +973,83 @@ A process of \textbf{traversing $[l,r)$ from right to left} is defined as: suppo
 
 Now, we want to divide $[0,n]$ into some intervals $[l_i,r_i)$, satisfying $l_i=r_{i-1}$, and perform the following process one-by-one: traversing $[l_1,r_1)$ from left to right; traversing $[l_2,r_2)$ from right to left; traversing $[l_3,r_3)$ from left to right; and so on. 
 
-Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<T$ with equal probability, and set all $l_i=b+iT$ and $r_i=b+(i+1)T$. This is the algorithm $A$. Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$ if $T$ is carefully chosen.
+Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<T$ with equal probability, and set all $l_i=b+iT$ and $r_i=b+(i+1)T$ \textit{(we need $[0,b)$ for the case $b\ge 1$, and the last $r_i$ may exceeds $n$. However, we can ignore this, and it does not make the answer smaller)}. This is the algorithm $A$. 
 
+Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$ if $T$ is carefully chosen.
 
+Suppose we are doing the process of traversing $[l,r)$ from left to right, and $P\cap ([l,r)\times [0,n))=\{v_1(x_1,y_1),v_2(x_2,y_2),\ldots,v_k(x_k,y_k)\}$ in the order of $x$-coordinate, i.e. $x_1\le x_2\le \cdots\le x_k$. The number of step in this process can be calculated as
+\begin{align}
+V_{\text{left}\to \text{right}}(l,r):=n+\left(|l-y_1|+\sum\limits_{i=1}^{k-1} |y_{i}-y_{i+1}|+|y_k-r|\right). \label{ggg}
+\end{align}
+The reason is as above: at $x$-coordinate, we always go in one direction, so the number of steps is $n$; at $y$-coordinate, from $v_i$ to $v_{i+1}$, we need $|y_i-y_{i+1}|$ steps, adding the contribution of $(l,0)\to v_1$ and $v_k\to (r,n)$, we get \eqref{ggg}.
+
+\begin{definition}
+\label{def5.3}
+For a point $A_i$, if it lies in a strip $[l,r)$, define the \textbf{distance function} $w(A_i)=\max\{y_i-l,r-y_i\}$.
+\end{definition}
+We use the definition \ref{def5.3} to give a bound of \eqref{ggg}.
+
+\begin{lemma}
+    \label{ineq}
+For every two points $A_i,A_{i+1}$ which are in the same strip $[l,r)$, we have
+$$|y_i-y_{i+1}|\le w(v_i)+w(v_{i+1})-T,$$
+where $T=|r-l|$.
+\end{lemma}
+\begin{proof}
+WLOG let $y_i\ge y_{i+1}$. Then, since $r\ge y_i\ge y_{i+1}\ge l$, we have
+$$|y_i-y_{i+1}|+|r-l|=|r-y_{i+1}|+|y_i-l|\le w(v_{i+1})+w(v_i).$$
+\end{proof}
+
+Using Lemma \ref{ineq}, we have
+\begin{align*}
+V_{\text{left}\to \text{right}}(l,r) &= n+\left(|l-y_1|+\sum\limits_{i=1}^{k-1} |y_{i}-y_{i+1}|+|y_k-r|\right)\\
+&\le n + w(v_1) + \sum\limits_{i=1}^{k-1} (w(v_i)+w(v_{i+1})-T) + w(v_k)\\
+&= n + 2\sum\limits_{i=1}^{k} w(v_i) - (k-1)T\\
+&= n + \sum\limits_{i=1}^k (2w(v_i)-T) + T. 
+\end{align*}
+Similarly, we get
+$$V_{\text{right}\to \text{left}}(l,r)\le n + \sum\limits_{i=1}^k (2w(v_i)-T) + T. $$
+Adding up each $[l,r)$, observe that the number of strips is at most $\frac{n}{T}+1$, we have
+\begin{align*}
+\#\text{steps} &= \sum\limits_{[l,r)} V(l,r)\\
+&\le (n+T)\cdot \left(\dfrac{n}{T}+1\right)+\sum\limits_{i=1}^n (2w(V_i)-T),
+\end{align*}
+where $P=\{V_1,\cdots,V_n\}$ is the set of key points. To bound the expectation of the number of steps, we need to first bound the expectation of $w(V_i)$.
+
+\begin{lemma}
+    \label{lemma5.3}
+For every $V\in P$, if $0\le b<T$ is uniformly chosen, and all strips $[l_j,r_j)$ is generated by
+$$l_j=b+jT,\quad r_j=b+(j+1)T,$$
+we have
+$$\mathbb{E}[w(V)]\le \dfrac{3T}{4}+1.$$
+\end{lemma}
+\begin{proof}
+There is equal probability for $y_V-l$ to be $0,1,\cdots,T-1$, and the corresponding value of $w(V)$ is
+$$T,T-1,T-2,\cdots,T-2,T-1,T,$$
+respectively. Thus, we have for an even $T$,
+$$\mathbb{E}[w(V)]=\dfrac{1}{T}\cdot \dfrac{1}{4}(T+1)(3T-1)\le \dfrac{3T}{4}+1;$$
+for an odd $T$,
+$$\mathbb{E}[w(V)]=\dfrac{1}{T}\cdot (\dfrac{3T}{2}+1)\dfrac{T}{2}\le \dfrac{3T}{4}+1.$$
+\end{proof}
+
+Using \ref{lemma5.3}, we have
+\begin{align*}
+\mathbb{E}_{0\le b<T}[\ell_b] &= \mathbb{E}[\#\text{steps}]\\
+&\le (n+T)\cdot \left(\dfrac{n}{T}+1\right)+\sum\limits_{i=1}^n (2\mathbb{E}[w(V_i)]-T)\\
+&\le (n+T)\cdot \left(\dfrac{n}{T}+1\right) + n\cdot \left(\dfrac{T}{2}+2\right)\\
+&\le \dfrac{n^2}{T}+\dfrac{nT}{2}+5n
+\end{align*}
+when $T\le n$. That means, if we pick $T=\lceil\sqrt{2}n^{1/2}\rceil$, we have
+$$\mathbb{E}_{0\le b<T}[\ell_b]\le \dfrac{\sqrt{2}}{2}n^{3/2}+\dfrac{\sqrt{2}}{2}n^{3/2}+10n = \sqrt{2}n^{3/2}+10n.$$
+To conclude, we have proved the following theorem:
+\begin{theorem}
+    \label{theo5.1}
+When $b$ is randomly chosen, the expection of the yielding path length of algorithm $A$ with $T=\lceil\sqrt{2}n^{1/2}\rceil$ is at most $\sqrt{2}n^{3/2}+10n$.
+\end{theorem}
+
+Thus, we can try all possible $b$, and find the minimum length of the path. Combining Lemma \ref{hahaha1} and Theorem \ref{theo5.1}, $A$ is a solution to \texttt{OPTP} on grid graph $G_{n+1}$.
+
+Now consider the time complexity of $A$. There are $O(n^{1/2})$ possible $b$. For each $b$, we need to sort the key points by $x$-coordinate and then $y$-coordinate (for each strip), which costs $O(n\log n)$ time; and find the length of the path, using $O(n)$ time. Therefore, the total time complexity is $O(n^{3/2}\log n)=o(n^2)=o(|V|)$.
 
 \bibliographystyle{plain} % or any other style you prefer
 \bibliography{citation}
