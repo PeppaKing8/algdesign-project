@@ -1038,6 +1038,8 @@ By addressing these open problems, researchers can further advance the SOTA in a
 
 \subsection{Exact Matching (EM)}
 
+
+
 \section{Our Proposed Problem: Optimal Point Traversing Path}
 
 \subsection{Problem Definition}
@@ -1064,6 +1066,8 @@ Since we model the key points to be the user's location, and the graph to be the
 
 With the supposition above, we can assume the key point set $|P|=n$, which is a sensible assumption.
 
+\subsubsection{The Lower Bound of $\xi$}
+
 Now consider the worst case $\xi(n)$. 
 
 \begin{lemma}
@@ -1089,6 +1093,8 @@ Thus, the minimal length of the traversing path is at least
 $$(\sqrt{2n}-2)(|S|-1)\ge (\sqrt{2n}-2)(n-4\sqrt{n})\ge \sqrt{2}\cdot n^{3/2}-10n.$$
 \end{proof}
 
+\subsubsection{The Randomized Algorithm}
+
 Now we give an algorithm $A$, that runs in $o(n^2)=o(|V|)$ time (i.e. \textbf{sublinear}), to solve \texttt{OPTP} on $G_{n+1}$. Using Lemma \ref{hahaha1}, we only need to show that $A$ outputs a path of length at most $\sqrt{2}n^{3/2}+10n$ in every case.
 
 \begin{definition}
@@ -1106,6 +1112,8 @@ A process of \textbf{traversing $[l,r)$ from right to left} is defined as: suppo
 Now, we want to divide $[0,n]$ into some intervals $[l_i,r_i)$, satisfying $l_i=r_{i-1}$, and perform the following process one-by-one: traversing $[l_1,r_1)$ from left to right; traversing $[l_2,r_2)$ from right to left; traversing $[l_3,r_3)$ from left to right; and so on. 
 
 Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<T$ with equal probability, and set all $l_i=b+iT$ and $r_i=b+(i+1)T$ \textit{(we need $[0,b)$ for the case $b\ge 1$, and the last $r_i$ may exceeds $n$. However, we can ignore this, and it does not make the answer smaller)}. This is the algorithm $A$. 
+
+\subsubsection{Correctness Proof}
 
 Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$ if $T$ is carefully chosen.
 
@@ -1181,7 +1189,33 @@ When $b$ is randomly chosen, the expection of the yielding path length of algori
 
 Thus, we can try all possible $b$, and find the minimum length of the path. Combining Lemma \ref{hahaha1} and Theorem \ref{theo5.1}, $A$ is a solution to \texttt{OPTP} on grid graph $G_{n+1}$.
 
+\subsubsection{Time Complexity}
+
 Now consider the time complexity of $A$. There are $O(n^{1/2})$ possible $b$. For each $b$, we need to sort the key points by $x$-coordinate and then $y$-coordinate (for each strip), which costs $O(n\log n)$ time; and find the length of the path, using $O(n)$ time. Therefore, the total time complexity is $O(n^{3/2}\log n)=o(n^2)=o(|V|)$.
+
+However, if we only need the length of the path to be $\le (\sqrt{2}+\epsilon)n^{3/2}$, where $\epsilon>0$, we can randomly choose few samples of $b$ to get a promising result. Specifically, due to the Markov's inequality, we have the following lemma:
+\begin{lemma}
+    \label{lemma5.4}
+For every $\epsilon>0$, the probability of $\ell_b\ge (\sqrt{2}+\epsilon)n^{3/2}$ is at most $\dfrac{\sqrt{2}}{\sqrt{2}+\epsilon}+o(1)$.
+\end{lemma}
+Using this lemma, we can randomly choose $O(-\log \delta)$ samples of $b$. Then, with probability $\ge 1-\delta$, we can find a $b$, such that
+$$\ell_b\le (\sqrt{2}+\epsilon)(n^{3/2}).$$
+And the time complexity of this random algorithm $A'$ is $O(n\log n\cdot (-\log \delta))$.
+
+\subsection{Discussions on the General Case}
+
+In this problem, grid graph is much easier than the general case. We believe that, this is not only due to the special structure of the grid graph, but also the special property of it, which is summarized as follows:
+\begin{enumerate}
+    \item Its diameter is $O(\sqrt{|V|})$, which is relatively small;
+    \item It has a lot of symmetry and local similarity, which facilitates the algorithm design;
+    \item It contains a relatively small set of points $U$, such that for almost all pair of points, we can characterize the shortest path as follows: go to the nearest point in $U$, and then go to the destination. Furthermore, every point $v\not\in U$ has a bounded distance to $U$.
+\end{enumerate}
+
+For the property 2, reader can see the functionality of it at Lemma \ref{ineq}. In fact, the inequality in \ref{ineq} holds iff $A_i,A_{i+1}$ is seperated by the horizontal line $x=(l+r)/2$. So, we can select $x=(l_i+r_i)/2,\ \forall i$ to be the points in $U$.
+
+We believe that, if a graph has the similar property as the grid graph, we can also design a fast algorithm to solve the \texttt{OPTP} problem on it.
+
+However, in the general case, these properties do not generally hold, and we have no progress to solve this problem. So this is our future work direction.
 
 \bibliographystyle{plain} % or any other style you prefer
 \bibliography{references} % use the .bib file
