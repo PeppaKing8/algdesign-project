@@ -150,7 +150,7 @@ $d_i$ is the degree of $i$. If $S=AD'$, then $D_{ij}$ is even iff $S_{ij}\ge d_i
 \begin{algorithm}
 \caption{APD}
 \label{alg:example}
-\begin{algorithmic}
+\begin{algorithmic}[1]
     \STATE \textbf{Input:} Graph $G=(V,E)$ with adjacency matrix $A$
     \STATE \textbf{Output:} Distance matrix $D$
     \STATE $\bar A\leftarrow I+A$
@@ -240,7 +240,7 @@ The whole algorithm (APSP) is shown in Algorithm \ref{alg:APSP}. The black box \
 \begin{algorithm}
     \caption{APSP}
     \label{alg:APSP}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \STATE \textbf{Input:} Graph $G=(V,E)$ with adjacency matrix $A$
         \STATE \textbf{Output:} Successor matrix $S$
         \STATE $D\leftarrow \text{APD}(A)$
@@ -261,7 +261,7 @@ The whole algorithm (APSP) is shown in Algorithm \ref{alg:APSP}. The black box \
 \begin{algorithm}
     \caption{BPWM}
     \label{alg:BPWM}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \STATE \textbf{Input:} 0-1 matrices $A,B$ of size $n\times n$
         \STATE \textbf{Output:} Witness matrix $W$
         \FOR{$t=0,1,\cdots,[\log n]$}
@@ -377,7 +377,7 @@ First we consider an alternative approach to BPWM. The idea is, we randomly dele
 \begin{algorithm}
     \caption{An Alternative BPWM Algorithm}
     \label{alg:bp2}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \STATE \textbf{Input:} 0-1 matrices $A,B$ of size $n\times n$
         \STATE \textbf{Output:} Witness matrix $W$
         \STATE $C\leftarrow AB$
@@ -526,7 +526,7 @@ The algorithm is based on the following procedure:
 \begin{algorithm}
 \caption{Contract}
 \label{alg:contract}
-\begin{algorithmic}
+\begin{algorithmic}[1]
     \STATE \textbf{Input:} A multi-graph $G(V,E)$, a number $k$
     \STATE \textbf{Output:} A graph $G'(V',E')$
     \STATE $G'\leftarrow G$
@@ -588,7 +588,7 @@ The basic problem with Algorithm \ref{alg:contract} with $k=2$ is the success pr
 \begin{algorithm}
 \caption{Fast Cut}
 \label{alg:fastcut}
-\begin{algorithmic}
+\begin{algorithmic}[1]
     \STATE \textbf{Input:} A multi-graph $G(V,E)$
     \STATE \textbf{Output:} A cut $(S,V\backslash S)$
     \STATE $n\leftarrow |V|$
@@ -666,7 +666,7 @@ To handle the weighted graph, we can modify the contraction process in Algorithm
 \begin{algorithm}
     \caption{Weighted Contract}
     \label{alg:weightcontract}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
         \STATE \textbf{Input:} A multi-graph $G(V,E)$, a number $k$
         \STATE \textbf{Output:} A graph $G'(V',E')$
         \STATE $G'\leftarrow G$
@@ -709,7 +709,7 @@ Next, we analyze the time complexity of the Fast Cut algorithm for sparse graphs
 % \begin{algorithm}
 %     \caption{Modified Fast Cut}
 %     \label{alg:modifyfastcut}
-%     \begin{algorithmic}
+%     \begin{algorithmic}[1]
 %         \STATE \textbf{Input:} A multi-graph $G(V,E)$
 %         \STATE \textbf{Output:} A cut $(S,V\backslash S)$
 %         \STATE $n\leftarrow |V|$
@@ -882,7 +882,7 @@ Combine Lemma \ref{lemma:respect} with Lemma \ref{lemma:2respect}, we know the m
 % \begin{algorithm}
 % \caption{Goemans-Williamson Algorithm for Min Cut}
 % \label{alg:goemans-williamson}
-% \begin{algorithmic}
+% \begin{algorithmic}[1]
 %     \STATE \textbf{Input:} Graph $G=(V,E)$ with adjacency matrix $A$
 %     \STATE \textbf{Output:} Approximate Min Cut $(S, V \setminus S)$
 %     \STATE Solve the SDP relaxation of the Min Cut problem to obtain a matrix $X$
@@ -928,7 +928,7 @@ Let's start with a particular greedy strategy for the MST problem, known as Boru
 \begin{algorithm}
 \caption{Boruvka's Algorithm for MST}
 \label{alg:boruvka}
-\begin{algorithmic}
+\begin{algorithmic}[1]
     \STATE \textbf{Input:} Graph $G=(V,E)$ with edge weights $w:E\to \mathbb{R}$
     \STATE \textbf{Output:} Minimum Spanning Tree $T$
     \STATE Initialize $T$ to be an empty set
@@ -996,7 +996,7 @@ Based on this, we propose the following Linear Time Randomized Algorithm for MST
 
 \begin{algorithm}
     \caption{Linear Time Randomized Algorithm for MST}
-    \begin{algorithmic}
+    \begin{algorithmic}[1]
     \label{alg:randomizedmst}
     \STATE \textbf{Input:} Undirected Weighted Graph $G=(V,E)$ with edge weights $w:E\to \mathbb{R}$
     \STATE \textbf{Output:} Minimum Spanning Tree $T$
