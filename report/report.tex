@@ -957,7 +957,7 @@ Thus, the minimal length of the traversing path is at least
 $$(\sqrt{2n}-2)(|S|-1)\ge (\sqrt{2n}-2)(n-4\sqrt{n})\ge \sqrt{2}\cdot n^{3/2}-10n.$$
 \end{proof}
 
-Now we give an algorithm $A$, that runs in $o(n^2)=o(|V|)$ time, to solve \texttt{OPTP} on $G_{n+1}$. Using Lemma \ref{hahaha1}, we only need to show that $A$ outputs a path of length at most $\sqrt{2}n^{3/2}+10n$ in every case.
+Now we give an algorithm $A$, that runs in $O(n^2)=O(|V|)$ time, to solve \texttt{OPTP} on $G_{n+1}$. Using Lemma \ref{hahaha1}, we only need to show that $A$ outputs a path of length at most $\sqrt{2}n^{3/2}+10n$ in every case.
 
 \begin{definition}
     \label{def5.1}
@@ -973,7 +973,9 @@ A process of \textbf{traversing $[l,r)$ from right to left} is defined as: suppo
 
 Now, we want to divide $[0,n]$ into some intervals $[l_i,r_i)$, satisfying $l_i=r_{i-1}$, and perform the following process one-by-one: traversing $[l_1,r_1)$ from left to right; traversing $[l_2,r_2)$ from right to left; traversing $[l_3,r_3)$ from left to right; and so on. 
 
-Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<S$ with equal probability, and set all $l_i=b+iT$ and $r_i=b+(i+1)T$. This is the algorithm $A$. Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$.
+Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<T$ with equal probability, and set all $l_i=b+iT$ and $r_i=b+(i+1)T$. This is the algorithm $A$. Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$ if $T$ is carefully chosen.
+
+
 
 \bibliographystyle{plain} % or any other style you prefer
 \bibliography{citation}
