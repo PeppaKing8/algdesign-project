@@ -1038,7 +1038,92 @@ By addressing these open problems, researchers can further advance the SOTA in a
 
 \subsection{Exact Matching (EM)}
 
+\subsubsection{Introduction}
 
+The Exact Matching (EM) problem on a graph is as follows:\\
+\textbf{Input:} A graph $G$, with each edge $e$ having a color red or blue, and a non-negative integer $k$.\\
+\textbf{Task:} Decide whether $G$ has a perfect matching $\mathcal{M}$, such that exactly $k$ edges in $\mathcal{M}$ are red.
+\newline\newline
+This problem is first proposed by Papadimitriou and Yannakakis in 1982 \cite{papadimitriou1982complexity}. EM is conjecture at first to be \textbf{NP}-complete. However, Vazirani and Vazirani \cite{mulmuley1987matching} showed that EM is in \textbf{RP} - that is, it can be solved in polynomial time using randomized algorithms. Furthermore, EM was later shown to be in \textbf{RNC} (can solve in polylogarithmic time, i.e. $O(\log^cn)$, using polynomially many parallel processors).
+
+In this subsection, we will discuss one of the random algorithm of EM.
+
+\subsubsection{Pfaffian and Orientation}
+
+For a undirected simple graph $G$, we can define a \textbf{weighted orientation} as follows:
+
+\begin{definition}
+Suppose $D$ is a field. A mapping $\mathcal{X}:V\times V\to D$ of $G$ is a weighted orientation, if for each $(x,y)\in E(G)$, $\mathcal{X}(x,y)+\mathcal{X}(y,x)=0$; for each $(x,y)\not\in G$, $\mathcal{X}(x,y)=0$.
+\end{definition}
+Using this definition, we can now define the Pfaffian:
+
+\begin{definition}
+For a weighted orientation $\mathcal{X}$ of $G$, the Pfaffian of $\mathcal{X}$, $\mathbf{Pf}(\mathcal{X})$ is defined as
+$$\sum\limits_{M\in \mathcal{M}} t_M.$$
+Here, $\mathcal{M}$ is all perfect matchings of $G$, and $t_M$ is defined as
+\begin{align}
+t_M=\mathrm{sgn}(\sigma)\cdot \mathcal{X}(i_1,i_2)\mathcal{X}(i_3,i_4)\cdots \mathcal{X}(i_{2n-1},i_{2n}), \label{defpffa}
+\end{align}
+where $\sigma=(i_1i_2\cdots i_{2n})$ is a permutation of $V(G)$ such that $M=\{(i_{2j-1},i_{2j})\}_{1\le j\le n}$.
+\end{definition}
+Note that, although for a matching $M$, the representation permutation $\sigma$ is not unique, but the definition of $t_M$ is consistent. For instance, when we swap $i_1,i_2$, the sign of $\sigma$ changes, and $\mathcal{X}(i_1,i_2)=-\mathcal{X}(i_2,i_1)$, so \eqref{defpffa} remains the same; when we swap $(i_1,i_2)$ with $(i_3,i_4)$, the similar fact is also easy to verify.
+
+\subsubsection{A Polynomial Algorithm to Calculate Pfaffian}
+
+To derive Pfaffian for a weighted orientation, we must assume that the arithmetic operations in $D$ is $O(1)$. We claim Lemma \ref{pffa_eq_det}, which directly leads to a polynomial algorithm to calculate Pfaffian.
+
+\begin{definition}
+For a weighted orientation $\mathcal{X}$, define \textbf{Orientation Matrix} $A_G(\mathcal{X})$ to be
+$$A_G(\mathcal{X})=(\mathcal{X}_{ij})_{1\le i,j\le |V|}.$$
+\end{definition}
+
+\begin{lemma}
+\label{pffa_eq_det}
+For a weighted orientation $\mathcal{X}$, we have
+$$\det(A_G(\mathcal{X}))=\mathbf{Pf}(\mathcal{X})^2.$$
+\end{lemma}
+\begin{proof}
+\textit{(Sketch)} Consider each term in the expansion of $\det(A_G(\mathcal{X}))$. Each term is a product of $|V|$ elements, one from each row and column of $A_G(\mathcal{X})$. These $|V|$ elements represent $n$ oriented edges, satisfying each vertex in $V$ has exactly one outward degree and inward degree. Thus, these edges form several cycles.
+
+Suppose there have a odd cycle. Consider changing the orientation of each edges in this odd cycle, then the sign of the term in the determinant changes, but $t_M$ does not change. So these two terms cancel each other.
+
+Therefore, we can only consider those terms that form a bipartite graph. For each term, we can color the edges into two colors, such that each color is a perfect matching. This yields a correspondence to a term in $\mathbf{Pf}(\mathcal{X})^2$. The detailed calculation of the sign is omitted.
+\end{proof}
+Since we can use Gaussian elimination to calculate the determinant of a matrix in $O(n^3)$ time (where $n=|V|$), we can use this lemma to calculate the Pfaffian in $O(n^3)$ time.
+
+\subsubsection{Randomized Algorithm for EM}
+
+Now, assume $D=\mathbb{R}(x)$, where $x$ is an indeterminate. We define a weighted orientation $\mathcal{X}$ as follows: for every red edge $e=(a,b)$, let $\mathcal{X}(a,b)=f(a,b)x$; for every blue edge, let $\mathcal{X}(a,b)=f(a,b)$. Here, $f(a,b)\in \mathbb{R}$. 
+
+We can easily see that $\mathbf{Pf}(\mathcal{X})$ is a polynomial in $x$. Most importantly, the $x^k$ coefficient of $\mathbf{Pf}(\mathcal{X})$ represents all the perfect matchings with exactly $k$ red edges. Furthermore, if $f$ is randomly chosen from $\mathbb{R}$, then this coefficient is likely to be non-zero if it is non-zero initially.
+
+However, to give a specific bound of the probability of success, we can let $D=\mathbb{F}_p(x)$, and $f(a,b)\in \mathbb{F}_p$, where $p$ is a sufficiently large prime. 
+
+Thus, the algorithm is as follows: we randomly choose $f(a,b)\in \mathbb{F}_p$ for all edges, and calculate the Pfaffian of $\mathcal{X}$. If the $x^k$ coefficient is non-zero, then we output ``YES''; otherwise, we do this process again. If the number of trials exceeds a certain threshold $N$, we output ``NO''.
+
+This algorithm guarantees to run in polynomial time iff $N=O(\text{poly}(n))$.
+
+\subsubsection{Correctness: Schwarz's Lemma}
+
+Note that if we see $f(a,b)$ as an individual indeterminate, the $x^k$ coefficient of Pffafian is a polynomial in all $f(a,b)$. When all indeterminate $f(a,b)$ are randomly chosen, we will bound the probability of success by Schwarz's Lemma.
+
+\begin{lemma}
+\label{schwarz}
+Let $x_1,x_2,\cdots,x_n$ are $n$ indeterminates, and $P(x_1,x_2,\cdots,x_n)\in \mathbb{F}_p(x_1,x_2,\cdots,x_n)$ is a non-zero polynomial of degree $\le d$. Then,
+$$\#\{(x_1,x_2,\cdots,x_n)\in \mathbb{F}_p^n:P(x_1,\cdots,x_n)=0\}\le p^n\cdot \dfrac{d}{p}.$$
+\end{lemma}
+
+Obviously, the $x^k$ coefficient of Pfaffian is a polynomial of degree $\le n$ in all $f(a,b)$. So, if we select $p>2n$, then the probability of success is at least $\dfrac{1}{2}$, proving that \textbf{EM} $\in$ \textbf{RP}.
+
+\subsubsection{Open Problems}
+
+There are several open problems related to the Exact Matching problem: 
+\begin{enumerate}
+    \item \textbf{Deciding whether EM is in P}  has remained an open problem for almost four decades and little progress has been made even for very restricted
+    classes of graphs;
+    \item \textbf{Derandomizing} matching problems from the algorithm in \textbf{RNC} class \cite{svensson2017matching}.
+    \item \textbf{EM} together with other related problems, such as \textbf{TkPM}, remains open to design a better \textbf{deterministic approximation algorithm}.
+\end{enumerate}
 
 \section{Our Proposed Problem: Optimal Point Traversing Path}
 
