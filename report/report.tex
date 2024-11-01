@@ -178,9 +178,9 @@ Observe that, the preceding algorithm does not provide enough information of suc
 
 Suppose $D$ is computed with algorithm \ref{alg:example}. For every $i,j\in V$, how to find $S_{ij}$? Or, what is the necessary and sufficient condition of $S_{ij}$? The answer of the last question is clear: $(i,S_{ij})\in E$, and $D_{ij}-1 = D_{S_{ij}j}$. Let $r=D_{ij}$. For every integer $u\ge 0$, define $D^{(u)}$ as: $D^{(u)}_{ij}=1$ iff $D_{ij}=u$. So $S_{ij}$ is one of the \textbf{witness} of $A$ and $D^{(r-1)}$ w.r.t $i,j$. (\emph{Note: the witness of two matrices $A$ and $B$ w.r.t. $i,j$ is an index $x$ that $A_{ix}=B_{xj}=1$.})
 
-Given two 0-1 matrices $A,B$, to compute a \textbf{witness matrix} is a well-known problem in computer science called \textbf{Boolean Product Witness Matrix (BPWM)}. We will leave the implementation of BPWM in section \ref{sec:bpwm}. Now assume we have a black box \texttt{BPWM(A,B)}.
+Given two 0-1 matrices $A,B$, to compute a \textbf{witness matrix} is a well-known problem in computer science called \textbf{Boolean Product Witness Matrix (BPWM)}. We will leave the implementation of BPWM in section \ref{sec:bpwm}. Now assume we have a black box $\mathbf{BPWM}(A,B)$.
 
-From the above discussion, we need to enumerate $r=1,2,\cdots,n$ and compute $D^{(r-1)}$ for each $r$, and derive the witness matrix of $A$ and $D^{(r-1)}$, which needs $O(n)$ times of \texttt{BPWM}. However, a clever optimization can reduce to only $3$ times. For $s=0,1,2$, Let $D^{[s]}$ be the matrix where $D^{[s]}_{ij}=1$ iff $D_{ij}\equiv s\pmod 3$. Denote the witness of $A$ and $D^{[s]}$ by $W^{[s]}$.
+From the above discussion, we need to enumerate $r=1,2,\cdots,n$ and compute $D^{(r-1)}$ for each $r$, and derive the witness matrix of $A$ and $D^{(r-1)}$, which needs $O(n)$ times of $\mathbf{BPWM}$. However, a clever optimization can reduce to only $3$ times. For $s=0,1,2$, Let $D^{[s]}$ be the matrix where $D^{[s]}_{ij}=1$ iff $D_{ij}\equiv s\pmod 3$. Denote the witness of $A$ and $D^{[s]}$ by $W^{[s]}$.
 
 \begin{lemma}
 \label{5}
@@ -191,7 +191,7 @@ Firstly, $S_{ij}$ is a witness of $A$ and $W^{[(D_{ij}-1)\mod 3]}$. This is beca
 On the other hand, suppose $v=W^{[(D_{ij}-1)\mod 3]}_{ij}$. Then $D_{vj}\equiv D_{ij}-1\pmod 3$, and $v$ is a neighbor of $i$. Since from Lemma \ref{3}, $D_{vj}\in [D_{ij}-1,D_{ij}+1]$, we immediately get $D_{vj}=D_{ij}-1$, which means $v$ is one of the successor.
 \end{proof}
 
-Thus, if $W^{[s]}(s=0,1,2)$ is computed, $S$ can be derived in $O(n^2)$ time. The time complexity is $O(f(n)+n^2)$, where $f(n)$ is the time complexity of \texttt{BPWM}, obviously $\Omega(n^2)$.
+Thus, if $W^{[s]}(s=0,1,2)$ is computed, $S$ can be derived in $O(n^2)$ time. The time complexity is $O(f(n)+n^2)$, where $f(n)$ is the time complexity of \textbf{BPWM}, obviously $\Omega(n^2)$.
 
 \subsubsection{BPWM}
 \label{sec:bpwm}\
@@ -236,7 +236,7 @@ If we have missed some witness (which is very unlucky), we found these missing w
 
 In practice, we set $L=\gamma\log n$, where $\gamma$ is a constant. We pick $\gamma=3$ in practice, considering the trade-off between time complexity and success probability. 
 
-The whole algorithm (APSP) is shown in Algorithm \ref{alg:APSP}. The black box \texttt{BPWM} is implemented in Algorithm \ref{alg:BPWM}.
+The whole algorithm (APSP) is shown in Algorithm \ref{alg:APSP}. The black box \textbf{BPWM} is implemented in Algorithm \ref{alg:BPWM}.
 
 \begin{algorithm}
     \caption{APSP}
@@ -1105,11 +1105,11 @@ This algorithm guarantees to run in polynomial time iff $N=O(\text{poly}(n))$.
 
 \subsubsection{Correctness: Schwarz's Lemma}\
 
-Note that if we see $f(a,b)$ as an individual indeterminate, the $x^k$ coefficient of Pffafian is a polynomial in all $f(a,b)$. When all indeterminate $f(a,b)$ are randomly chosen, we will bound the probability of success by Schwarz's Lemma.
+Note that if we see $f(a,b)$ as an individual indeterminate, the $x^k$ coefficient of Pffafian is a polynomial in all $f(a,b)$. When all indeterminate $f(a,b)$ are randomly chosen, we will bound the probability of success by Schwartz–Zippel Lemma \cite{10.1145/322217.322225}.
 
 \begin{lemma}
 \label{schwarz}
-Let $x_1,x_2,\cdots,x_n$ be $n$ indeterminates, and $P(x_1,x_2,\cdots,x_n)\in \mathbb{F}_p(x_1,x_2,\cdots,x_n)$ is a non-zero polynomial of degree $\le d$. Then,
+Let $x_1,x_2,\cdots,x_n$ be $n$ indeterminates, and $P\in \mathbb{F}_p(x_1,x_2,\cdots,x_n)$ is a non-zero polynomial of degree $\le d$. Then,
 $$\#\{(x_1,x_2,\cdots,x_n)\in \mathbb{F}_p^n:P(x_1,\cdots,x_n)=0\}\le p^n\cdot \dfrac{d}{p}.$$
 \end{lemma}
 
