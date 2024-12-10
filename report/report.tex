@@ -58,7 +58,7 @@
 
     Graph algorithms are fundamental to numerous fields, providing solutions for various real-life scenarios. Traditionally, these problems have been approached with deterministic algorithms. However, randomized algorithms have emerged as powerful alternatives, capable of simplifying implementations and achieving significant performance improvements in both average-case scenarios and, sometimes, asymptotic bounds.
 
-    In this survey, we present an in-depth exploration of randomized techniques applied to key problems in graph theory. We examine the \textbf{All Pairs Shortest Path (APSP)} problem through matrix multiplication-based approaches, analyze the \textbf{Min Cut} problem using contraction-based methods. In each case, we provide experimental results of both deterministic and randomized algorithms, comparing their performance and discussing possible extensions and limitations. Furthermore, we introduce randomized algorithms for the \textbf{Minimum Spanning Tree (MST)} and \textbf{Exact Matching (EM)} problems. 
+    In this survey, we present an in-depth exploration of randomized techniques applied to key problems in graph theory. We examine the \textbf{All Pairs Shortest Path (APSP)} problem through matrix multiplication-based approaches, analyze the \textbf{Min Cut} problem using contraction-based methods. In each case, we provide \textbf{experimental results} of both deterministic and randomized algorithms, comparing their performance and discussing possible extensions and limitations. Furthermore, we introduce randomized algorithms for the \textbf{Minimum Spanning Tree (MST)} and \textbf{Exact Matching (EM)} problems. 
     
     Inspired by the randomized algorithms, we propose a new problem: \textbf{Optimal Point Traversing Path}, and present a sublinear randomized algorithm to solve the special case, completed with a correctness proof and complexity analysis.
 
@@ -73,13 +73,11 @@
 
 \newpage
 \section{Introduction}
-\subsection{Background and Outline}\
+\subsection{Background}\
 
-Graph theory is an essential branch of computer science and mathematics, providing tools for solving a vast array of problems across fields such as network optimization, computational biology, logistics, and social network analysis. Many of the most widely used algorithms for solving graph-related problems — including shortest paths, minimum cuts, and spanning trees — are built on deterministic techniques, which offer robust guarantees on solution quality and are well-understood in terms of computational complexity. However, as real-world graphs grow in size and complexity, the limitations of deterministic methods become apparent, especially in scenarios where rapid, scalable solutions are required.
+Graph theory is an essential branch of computer science and mathematics, providing tools for solving a vast array of problems across fields such as network optimization, computational biology, logistics, and social network analysis. Many of the most widely used algorithms for solving graph-related problems - including shortest paths, minimum cuts, and spanning trees - are built on deterministic techniques, which offer robust guarantees on solution quality and are well-understood in terms of computational complexity. However, as real-world graphs grow in size and complexity, the limitations of deterministic methods become apparent, especially in scenarios where rapid, scalable solutions are required.
 
 To address these challenges, randomized algorithms have gained prominence. By introducing randomness into the computation process, these algorithms can often achieve significant improvements in efficiency and simplicity. Randomized techniques can provide faster average-case performance, reduce algorithmic complexity, and in some cases, offer better asymptotic bounds compared to their deterministic counterparts. For example, randomized methods are particularly advantageous for large-scale or sparse graphs, where exact deterministic solutions may be computationally prohibitive.
-
-This report provides a comprehensive overview of randomized techniques applied to classic graph problems. We explore foundational problems such as All Pairs Shortest Path (APSP), Min Cut, and Minimum Spanning Tree (MST), examining both well-established and cutting-edge randomized approaches. For each problem, we discuss the theoretical underpinnings of the algorithms, assess their performance through time complexity analysis, and evaluate the potential for improvements and extensions to more complex graph types, including directed and weighted graphs. Additionally, we present open problems to encourage further research in this domain.
 
 % In particular, our contributions can be summarized as follows:
 % \begin{enumerate}
@@ -92,18 +90,16 @@ This report provides a comprehensive overview of randomized techniques applied t
 % Throughout this report, we aim to demonstrate how randomness can be leveraged to solve complex graph problems more efficiently and highlight open questions and possible areas for further research in this evolving field.
 \subsection{Our Work}\
 
-This report delves into both classic and contemporary randomized approaches for tackling fundamental graph problems. Here's an outline of our primary contributions and the structure of the report:
+This survey delves into both classic and contemporary randomized approaches for tackling fundamental graph problems. Here's an outline of our primary contributions and the structure of the survey:
 
 \begin{enumerate}
-    \item \textbf{All Pairs Shortest Path (APSP):} We begin with a review of deterministic methods for solving APSP, followed by an in-depth exploration of matrix multiplication-based algorithms. The report examines how algorithms like APD and BPWM utilize matrix operations to reduce computational complexity. We also include a time complexity analysis and present minor enhancements to improve performance. Experimental results showcase the impact of these methods in practice, with further extensions covering directed and weighted graphs, as well as strategies for derandomization.
-    \item \textbf{Min Cut:} The report examines the Karger-Stein algorithm, a widely recognized randomized approach for finding minimum cuts in graphs. This section covers essential techniques, such as contraction-based methods and fast cut algorithms, and discusses their computational complexity and practical implications. Experimental results provide insights into how these techniques perform on various types of graphs, and extensions for directed and weighted graphs are proposed. We also explore the potential for improving algorithmic efficiency using advanced data structures and analyze a  $\Theta((\log n)^2)$  speedup achieved through specific optimizations.
+    \item \textbf{All Pairs Shortest Path (APSP):} We begin with a review of deterministic methods for solving APSP, followed by an in-depth exploration of matrix multiplication-based algorithms. The survey examines how algorithms like APD and BPWM utilize matrix operations to reduce computational complexity. We also include a time complexity analysis and present minor enhancements to improve performance. Experimental results showcase the impact of these methods in practice, with further extensions covering directed and weighted graphs, as well as strategies for derandomization.
+    \item \textbf{Min Cut:} We examine the Karger-Stein algorithm, a widely recognized randomized approach for finding minimum cuts in graphs. This section covers essential techniques, such as contraction-based methods and fast cut algorithms, and discusses their computational complexity and practical implications. Experimental results provide insights into how these techniques perform on various types of graphs, and extensions for directed and weighted graphs are proposed. We also explore the potential for improving algorithmic efficiency using advanced data structures and analyze a  $\Theta((\log n)^2)$  speedup achieved through specific optimizations.
     \item \textbf{Other Related Problems:} This section addresses the Minimum Spanning Tree (MST) and Exact Matching (EM) problems. For MST, we review classical approaches and introduce randomized algorithms that achieve linear runtime improvements. Specific topics include Borůvka's algorithm and techniques for handling light and heavy edges. The exact matching section covers the Pfaffian orientation, polynomial algorithms for calculating the Pfaffian, and randomized solutions for EM, with a focus on correctness and complexity analysis based on Schwarz's Lemma.
-    \item \textbf{Our Proposed Problem:} Optimal Point Traversing Path: In addition to established problems, we propose and address an original problem focused on finding the optimal traversing path in a point-based grid graph. For this special case, we present a novel sublinear randomized algorithm, detailing its lower bounds, correctness proof, and time complexity. Experimental results illustrate the algorithm's performance, and we conclude with a discussion on generalizing this method for broader applications beyond grid graphs.
+    \item \textbf{Our Proposed Problem:} Optimal Point Traversing Path: In addition to established problems, we propose and address an original problem focused on finding the optimal traversing path in a point-based grid graph. For this special case, we present a novel sublinear randomized algorithm, detailing its lower bounds, correctness proof, and time complexity. We conclude with a discussion on generalizing this method for broader applications beyond grid graphs.
 \end{enumerate}
 
-First two part of this report includes experimental evaluations to compare the performance of deterministic and randomized approaches, along with a detailed analysis of the algorithms' strengths and weaknesses. By addressing these classic problems through the lens of randomized techniques, our goal is to provide valuable insights and highlight open questions in graph algorithms, ultimately advancing the understanding of where and how randomness can most effectively be applied in this field.
-
-This introduction provides a thorough grounding in the motivations for using randomized techniques in graph algorithms and gives a clear structure for the report's content and contributions.
+First two part of this survey includes experimental evaluations to compare the performance of deterministic and randomized approaches, along with a detailed analysis of the algorithms' strengths and weaknesses. By addressing these classic problems through the lens of randomized techniques, our goal is to provide valuable insights and highlight open questions in graph algorithms, ultimately advancing the understanding of where and how randomness can most effectively be applied in this field.
 
 \section{APSP: All Pairs Shortest Path}
 \subsection{Introduction}\
@@ -555,7 +551,7 @@ The computation model introduced above is based on \textbf{Sequential Model}, wh
     \item \textbf{Distributed CONGEST}: You can only communicate with neighbors in a synchronous network. The bandwidth is restricted with $O(\log n)$ bits per round. The complexity charged once per round. The SOTA is $\tilde{O}(\sqrt{n}+D)$ rounds for graph with diameter $D$\cite{dory2021distributed}.
 \end{enumerate}
 
-In this report, we will focus on the Sequential Model since it is the most common computation model in practice. We will introduce the randomized algorithms of Min Cut based on this.
+In this survey, we will focus on the Sequential Model since it is the most common computation model in practice. We will introduce the randomized algorithms of Min Cut based on this.
 
 \subsection{Karger-Stein Algorithm}\
 
@@ -1338,6 +1334,18 @@ For the property 2, reader can see the functionality of it at Lemma \ref{ineq}. 
 We believe that, if a graph has the similar property as the grid graph, we can also design a fast algorithm to solve the \texttt{OPTP} problem on it.
 
 However, in the general case, these properties do not generally hold, and we have no progress to solve this problem. So this is our future work direction.
+
+\section{Conclusion}
+
+In this survey, we have discussed and provided rigorous proofs of several classic randomized algorithms on graph problems, including APSP, MinCut, MST, and Exact Matching. These algorithms  perfectly leverage the nature of the graph structure in different perspectives and show the power of randomness in solving complex problems efficiently. Some of them, such as matrix multiplication-based APSP algorithm and Exact Matching algorithm using Pfaffian, are based on algebraic theories and reveal the deep connection between graph theory and other mathematical fields.
+
+By understanding these algorithms, we can gain insights into the design of efficient algorithms for graph problems and appreciate the beauty of randomness in algorithm design. Randomized algorithms are indeed more powerful and flexible, and can sometimes yield unbelievable results - expected linear time MST is a perfect example.
+
+However, there are still many open problems in the field of randomized algorithms on graphs. For example, can randomized algorithm be replaced by deterministic algorithms? Specifically, is there a linear time MST algorithm? Moreover, some theoretically efficient algorithms may not be practical in moderate-size real-world applications due to the complexity of implementation or the need for a large amount of randomness, as we have seen in the experiment of APSP and MinCut.
+
+In addition, we have proposed a new problem, \textsf{OPTP}, and designed a sublinear algorithm for the special case of grid graphs, which shows the potential of solving the \textsf{OPTP} problem on graphs with special properties. We left the general case as our future work. This example shows the power of randomized approximation algorithms in solving real-world problems.
+
+Randomized graph algorithms are still an active research area, attracting many researchers to explore new algorithms and solve open problems. Nevertheless, this field is just a small part of the vast world of randomized algorithms. We hope this survey can inspire more people to explore the beauty and power of randomness in algorithm design.
 
 \bibliographystyle{plain} % or any other style you prefer
 \bibliography{references} % use the .bib file
