@@ -8,3 +8,7 @@ report/report.blg
 report/report.toc
 report/report.synctex*.gz
 .DS_Store
+*.fdb_latexmk
+*.fls
+*.vscode
+*.pdf
