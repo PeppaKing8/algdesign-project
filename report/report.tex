@@ -409,7 +409,7 @@ One of the popular method for \textbf{derandomization} is \textit{pseudo-randomn
 
 Notice that the random part in APSP is the calculation of witness matrix. \cite{267748} shows that we can derandomize the process. 
 
-First we consider an alternative approach to BPWM. The idea is, we randomly delete some entries in $B$ iteratively, and in each iteration, we check if some witnesses are easy to compute. Specifically, we maintain an $0-1$ matrix $R$: at first it is $J$ (all entries are $1$), and in each iteration we cover some entries of $R$ with $0$, and calculate $A\cdot (B\land R)$. The sketch of the algorithm is shown in Algorithm \ref{alg:bp2}.
+First we consider an alternative approach to BPWM. The idea is, we randomly delete some entries in $B$ iteratively, and in each iteration, we check if some witnesses are easy to compute. Specifically, we maintain a $0-1$ matrix $R$: at first it is $J$ (all entries are $1$), and in each iteration we cover some entries of $R$ with $0$, and calculate $A\cdot (B\land R)$. The sketch of the algorithm is shown in Algorithm \ref{alg:bp2}.
 
 \begin{algorithm}
     \caption{An Alternative BPWM Algorithm}
@@ -460,7 +460,7 @@ Now we will prove that: in the ``while not all witnesses are computed'' part, we
 
 \begin{lemma}
 \label{apspext3}
-In each iteration, at least $(1-\alpha)^{M}$ fraction of entries of $D$ in $L$ will be given an witness, where $M=1+3\log_{4/3} n$.
+In each iteration, at least $(1-\alpha)^{M}$ fraction of entries of $D$ in $L$ will be given a witness, where $M=1+3\log_{4/3} n$.
 \end{lemma}
 
 \begin{proof}
@@ -486,7 +486,7 @@ Using union bound, we can prove that the probability of one-shot success is at l
 $$(\log n\cdot\dfrac{c}{\epsilon})^{2+o(1)}=\tilde O(1).$$
 So the ``random generation'' of $S$ can be replaced by trying every possible set in $\mathcal{S}$ one-by-one. Note that this also explains how to do step iii: with pseudo-randomness, for every entry that is selected in step ii, there exists $S'\in \mathcal{S}$ such that only one witness is preserved. As we have shown above, we can use another one matrix multiplication to find indices of these entries. In other words, we do iii and iv simultaneously.
 
-For the deterministic construction of $\mathcal{S}$, please refer to \cite{10.1145/100216.100244}. Here we provide an theoretical proof that such subset of this size exists:
+For the deterministic construction of $\mathcal{S}$, please refer to \cite{10.1145/100216.100244}. Here we provide a theoretical proof that such subset of this size exists:
 
 \begin{lemma}
 \label{psr1}
@@ -781,7 +781,7 @@ The success probability of the algorithm is still $\Omega(\frac{1}{\log n})$, th
 
 \subsection{A \texorpdfstring{$\Theta((\log n)^2)$}{ } Speedup}\
 
-Based on Algorithm, Karger speeds up the algorithm by a factor of $\Theta((\log n)^2)$ using a quite simple algorithm \cite{karger2000minimum}, relying only on finding least common ancestors and evaluating expression-trees, and may
+Based on Algorithm, Karger speeds up the algorithm by a factor of $\Theta((\log n)^2)$ using a quite simple algorithm \cite{karger2000minimum}, relying only on finding the least common ancestors and evaluating expression-trees, and may
 therefore outperform the Fast Cut algorithm in practice. In a large class of graph, it runs in $O(m)$ time. Due to the space limitation, we won't go into details of the algorithm, but give a brief introduction to introduce the main idea.
 
 At its core is following definition:
@@ -854,7 +854,7 @@ Now we are left the following question: given a tree, find the minimum cut that 
     \cutval{\descendants{v_i}} &= \cutval{\descendants{v}_{i+1}}+\crossweight{v_i}{\ancestors{v}_i} -\crossweight{v_i}{\descendants{v}_i}
     \end{align*}
 
-    It takes $O(n)$ time to compute all $n$ cut values. We know extend our DP function from paths to general trees. For any function $f$, we define treefix sum of $f$, denoted $\descendants{f}$, as
+    It takes $O(n)$ time to compute all $n$ cut values. We know extend our DP function from paths to general trees. For any function $f$, we define the treefix sum of $f$, denoted $\descendants{f}$, as
     \begin{align*}
         \descendants{f}(v)=\sum_{w\in\descendants{v}}f(w)
     \end{align*}
@@ -889,7 +889,7 @@ Using the similar idea, we can prove the following lemma:
         &=\cutval{\descendants{w}}-\cutval{\descendants{v}}+2\crossweight{\descendants{v}}{\descendants{w}}-4\descendants{\rho}(v)
     \end{align*}
     
-    We already show how to compute all $\cutval{\descendants{v}}$ and $\descendants{\rho}(v)$ in $O(m)$-time, similarly $\crossweight{\descendants{v}}{\descendants{w}}$ can be computed using treefix sum of $f_v(w)=\crossweight{v}{w}$ (which is the weight of edge $(v,w)$), then for each $v,w$, all $n^2$ values
+    We already show how to compute all $\cutval{\descendants{v}}$ and $\descendants{\rho}(v)$ in $O(m)$-time, similarly $\crossweight{\descendants{v}}{\descendants{w}}$ can be computed using the treefix sum of $f_v(w)=\crossweight{v}{w}$ (which is the weight of edge $(v,w)$), then for each $v,w$, all $n^2$ values
     \begin{align*}
         g_w(v)=\descendants{f_v}(w)=\sum_{u\in\descendants{w}}\crossweight{v}{u}=\crossweight{v}{\descendants{w}}
     \end{align*}
@@ -1017,9 +1017,9 @@ Based on the algorithm above, we can use random sampling to identify and elimina
 \begin{proof}
     Consider following process: sort edges of $G$ in the order of increasing weight, construct $G(p)$ by including each edge in this order with probability $p$. The minimum spanning forest of $G(p)$ can be constructed during the process. The edge is added to $F$ if and only if the two endpoints $u$ and $v$ belong to different connected components of $F$. The observations are:
     \begin{enumerate}
-        \item edges are never removed from $F$ during this process.
-        \item the $F$-lightness of $e_i$ only depends on the connected components of $F$ after $e_i$ is added to $F$.
-        \item the edge $e_i$ is $F$-light finally if and only if it's $F$-light when it's added to $F$.
+        \item Edges are never removed from $F$ during this process.
+        \item The $F$-lightness of $e_i$ only depends on the connected components of $F$ after $e_i$ is added to $F$.
+        \item The edge $e_i$ is $F$-light finally if and only if it's $F$-light when it's added to $F$.
     \end{enumerate}
     Define phase $k$ as starting after forest $F$ has $k-1$ edges and end when $F$ has $k$ edges. The number of $F$-light edges considered during this phase has geometric distribution with parameter $p$. Suppose $F$ grows in size from 0 to $s$. The number of $F$-light edges considered during this process is sum of $s$ independent geometric random variables with parameter $p$.
 
@@ -1141,7 +1141,7 @@ This algorithm guarantees to run in polynomial time iff $N=O(\text{poly}(n))$.
 
 \subsubsection{Correctness: Schwarz's Lemma}\
 
-Note that if we see $f(a,b)$ as an individual indeterminate, the $x^k$ coefficient of Pffafian is a polynomial in all $f(a,b)$. When all indeterminate $f(a,b)$ are randomly chosen, we will bound the probability of success by Schwartz–Zippel Lemma \cite{10.1145/322217.322225}.
+Note that if we see $f(a,b)$ as an individual indeterminate, the $x^k$ coefficient of Pffafian is a polynomial in all $f(a,b)$. When all indeterminate $f(a,b)$ are randomly chosen, we will bound the probability of success by Schwartz-Zippel Lemma \cite{10.1145/322217.322225}.
 
 \begin{lemma}
 \label{schwarz}
