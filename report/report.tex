@@ -68,14 +68,14 @@
 
     \textbf{Keywords:} Randomized Algorithms, Graph Theory, APSP, Min Cut, MST, EM
 \end{abstract}
-
+\newpage
 \tableofcontents
 
 \newpage
 \section{Introduction}
 \subsection{Background}\
 
-Graph theory is an essential branch of computer science and mathematics, providing tools for solving a vast array of problems across fields such as network optimization, computational biology, logistics, and social network analysis. Many of the most widely used algorithms for solving graph-related problems - including shortest paths, minimum cuts, and spanning trees - are built on deterministic techniques, which offer robust guarantees on solution quality and are well-understood in terms of computational complexity. However, as real-world graphs grow in size and complexity, the limitations of deterministic methods become apparent, especially in scenarios where rapid, scalable solutions are required.
+Graph theory is an essential branch of computer science and mathematics, providing tools for solving a vast array of problems across fields such as network optimization, computational biology, logistics, and social network analysis. Many of the most widely used algorithms for solving graph-related problems, including shortest paths, minimum cuts, and spanning trees, are built on deterministic techniques, which offer robust guarantees on solution quality and are well-understood in terms of computational complexity. However, as real-world graphs grow in size and complexity, the limitations of deterministic methods become apparent, especially in scenarios where rapid, scalable solutions are required.
 
 To address these challenges, randomized algorithms have gained prominence. By introducing randomness into the computation process, these algorithms can often achieve significant improvements in efficiency and simplicity. Randomized techniques can provide faster average-case performance, reduce algorithmic complexity, and in some cases, offer better asymptotic bounds compared to their deterministic counterparts. For example, randomized methods are particularly advantageous for large-scale or sparse graphs, where exact deterministic solutions may be computationally prohibitive.
 
@@ -99,7 +99,7 @@ This survey delves into both classic and contemporary randomized approaches for 
     \item \textbf{Our Proposed Problem:} Optimal Point Traversing Path: In addition to established problems, we propose and address an original problem focused on finding the optimal traversing path in a point-based grid graph. For this special case, we present a novel sublinear randomized algorithm, detailing its lower bounds, correctness proof, and time complexity. We conclude with a discussion on generalizing this method for broader applications beyond grid graphs.
 \end{enumerate}
 
-First two part of this survey includes experimental evaluations to compare the performance of deterministic and randomized approaches, along with a detailed analysis of the algorithms' strengths and weaknesses. By addressing these classic problems through the lens of randomized techniques, our goal is to provide valuable insights and highlight open questions in graph algorithms, ultimately advancing the understanding of where and how randomness can most effectively be applied in this field.
+First two part of this survey includes \textbf{experimental evaluations} to compare the performance of deterministic and randomized approaches, along with a detailed analysis of the algorithms' strengths and weaknesses, as well as \textbf{possible optimization}. By addressing these classic problems through the lens of randomized techniques, our goal is to provide valuable insights and highlight open questions in graph algorithms, ultimately advancing the understanding of where and how randomness can most effectively be applied in this field.
 
 \section{APSP: All Pairs Shortest Path}
 \subsection{Introduction}\
@@ -266,7 +266,7 @@ For every $1\le t\le n$, there exists a natural number $k\le \log n$, such that 
 Let $k$ be the largest integer such that $t\cdot 2^k\le n$. Then $t\cdot 2^{k+1}>n$, so $t\cdot 2^k\le n/2$. And $2^k\le t\cdot 2^k\le n$, so $k\le \log n$, as desired.
 \end{proof}
 
-So the algorithm is as follows: enumerate every $r=1,2,\cdots,2^{\lfloor\log n\rfloor}$. For every $r$, randomly choose $L=\Theta(\log n)$ subsets of rank $r$, and compute the witness matrix. For every $i,j$, Lemma \ref{6} tells us the probability to fail is $o(\dfrac{1}{n^2})$ if $\lim\limits_{n\to \infty}\dfrac{L}{\log n}$ is sufficiently large. Then the union bound directly bounds the failing probability by $o(1)$.
+So the algorithm is as follows: enumerate every $r=1,2,\cdots,2^{\lfloor\log n\rfloor}$. For every $r$, randomly choose $L=\Theta(\log n)$ subsets of rank $r$, and compute the witness matrix. For every $i,j$, Lemma \ref{6} tells us the probability to fail is $o\left(\dfrac{1}{n^2}\right)$ if $\lim\limits_{n\to \infty}\dfrac{L}{\log n}$ is sufficiently large. Then the union bound directly bounds the failing probability by $o(1)$.
 
 If we have missed some witness (which is very unlucky), we found these missing witnesses by brute-force - $O(n)$ for every pair $(i,j)$. Since the expected number of missing pair is $O(1)$, the time complexity of this procedure can be ignored.
 
@@ -680,7 +680,7 @@ The algorithms are implemented with C++.
 
 We set the graph size to be $n\in\{200,300,400,500,600,700\}$. In our experiment, edges are independently and uniformly generated. Besides, we also ensure the graph is connected by adding $M-1$ edges to connect the graph, where $M$ is the number of connected components.
 
-Our test environment is $\texttt{-std=C++11}$ on Ubuntu 20.04 using AMD EPYC 7452 32-Core Processor with 512GB RAM.
+Our test environment is $\texttt{-std=C++11}$ and has unlimited stack size. 
 
 \begin{figure}[ht]
     \centering
@@ -740,7 +740,7 @@ By using union-find data structure, we can improve the time complexity of Algori
 
 Since there are $m$ edges,  there are at most $m$ merging operations. Instead of randomly selecting each edge using $O(n)$ time, we generate a random permutation of the edges in $O(m)$ time, then merge the supernodes in the order of permutation. The total time complexity of the contraction process is amortized $O(m\alpha(n))$ using union find data structure. Using the naive contraction process, we can reduce the time complexity of contraction process from $O(n^2)$ to $O(m\alpha(n))$, which is more efficient for sparse graphs. However, does it really improve the time complexity of the Fast Cut algorithm like claimed in some notes\cite{CS161Lecture16} ?
 
-Next, we analyze the time complexity of the Fast Cut algorithm for sparse graphs using union-find data structure.
+Based on the question above, we analyze the time complexity of the Fast Cut algorithm for sparse graphs using union-find data structure.
 
 % We modify the Fast Cut algorithm to the following:
 
@@ -784,31 +784,25 @@ The success probability of the algorithm is still $\Omega(\frac{1}{\log n})$, th
 Based on Algorithm, Karger speeds up the algorithm by a factor of $\Theta((\log n)^2)$ using a quite simple algorithm \cite{karger2000minimum}, relying only on finding the least common ancestors and evaluating expression-trees, and may
 therefore outperform the Fast Cut algorithm in practice. In a large class of graph, it runs in $O(m)$ time. Due to the space limitation, we won't go into details of the algorithm, but give a brief introduction to introduce the main idea.
 
-At its core is following definition:
-
+At its core are following definitions:
 \begin{definition}
     Let $T$ be a spanning tree of $G$. We say that a cut in $G$ $k$-respects $T$ if it cuts at most $k$ edges of $T$. We also say that $T$ $k$-constrains the cut in $G$.
 \end{definition}
-
-and 
-
+% and 
 \begin{definition}
-    A cut in $G$ is $\alpha$-minimum if its value is at most
-    $\alpha$ times the minimum cut value.
+    A cut in $G$ is $\alpha$-minimum if its value is at most $\alpha$ times the minimum cut value.
 \end{definition}
 
 In an unweighted $n$-vertex cycle, any set of at most $\lceil 2\alpha\rceil$ edges forms an $\alpha$-minimum cut. Therefore, the number of $\alpha$-minimum cuts can be as large as
 \begin{align*}
     \binom{n}{2}+\binom{n}{4}+\cdots+\binom{n}{\lceil 2\alpha\rceil}\leq \Theta(n^{\lceil 2\alpha\rceil})
 \end{align*}
-
 and we can give an upper bound on the number of $\alpha$-minimum cuts
-
 \begin{lemma}
     The number of $\alpha$-minimum cuts is at most
   \[
   \frac{1}{\lfloor 2\alpha \rfloor + 1 -2\alpha} \binom{n}{\lfloor
-      2\alpha \rfloor}(1+O(1/n)).
+      2\alpha \rfloor}\left(1+O\left(\frac{1}{n}\right)\right)
   \]
 \end{lemma} 
 
@@ -937,10 +931,10 @@ Combine Lemma \ref{lemma:respect} with Lemma \ref{lemma:2respect}, we know the m
 
 Despite the significant progress in algorithms for the Min Cut problem, several open problems remain. We highlight key challenges and directions for future research:
 \begin{enumerate}
-    \item \textbf{Improved Approximation Algorithms:} Develop faster algorithms with better approximation guarantees, especially for graphs with specific structures or properties
-    \item \textbf{Dynamic Graphs:} Extend these algorithms to handle dynamic graphs, where the graph structure changes over time
-    \item \textbf{Parallel and Distributed Algorithms:} Finding efficient parallel and distributed algorithms for the Min Cut problem is an important area of research, especially given the increasing size of real-world graphs
-    \item \textbf{Generalizations and Variants:} Explore generalizations and variants of the Min Cut problem, such as weighted graphs, directed graphs, and multi-way cuts
+    \item \textbf{Improved Approximation Algorithms:} Develop faster algorithms with better approximation guarantees, especially for graphs with specific structures or properties.
+    \item \textbf{Dynamic Graphs:} Extend these algorithms to handle dynamic graphs, where the graph structure changes over time.
+    \item \textbf{Parallel and Distributed Algorithms:} Finding efficient parallel and distributed algorithms for the Min Cut problem is an important area of research, especially given the increasing size of real-world graphs.
+    \item \textbf{Generalizations and Variants:} Explore generalizations and variants of the Min Cut problem, such as weighted graphs, directed graphs, and multi-way cuts.
 \end{enumerate}
 
 By addressing these problems, researchers can further advance the state of the art in algorithms for the Min Cut problem.
@@ -1065,9 +1059,9 @@ Since all $F_2$-heavy edges are impossible to be included in the MST by Theorem 
 Despite significant advancements in algorithms for the Minimum Spanning Tree problem, several open problems remain:
 
 \begin{enumerate}
-    \item \textbf{Linear Time Deterministic MST Algorithms:} While randomized algorithms, like Karger's, achieve near-linear time complexity, it is still an open question whether a deterministic linear-time algorithm exists for finding the MST in undirected, weighted graphs. Achieving this would be a major breakthrough, especially in deterministic graph processing.
-    \item \textbf{MST in Hypergraphs:} Extending the MST problem to hypergraphs, where edges can connect more than two vertices, is less understood and lacks efficient algorithms. The MST definition in hypergraphs is not as straightforward as in regular graphs, and finding optimal algorithms for this generalization, including approximation methods, remains an open question.
-    \item \textbf{Streaming MST:} In streaming settings, where edges are processed sequentially due to memory constraints, designing efficient algorithms to compute or approximate the MST is challenging. The open problem here is to find single-pass, memory-efficient algorithms that can construct the MST or approximate it closely with minimal space usage, especially for massive graphs.
+    \item \textbf{Linear Time Deterministic MST Algorithms:} While randomized algorithms, like Karger's, achieve near-linear time complexity, it is still an open question whether a deterministic linear-time algorithm exists for finding the MST in undirected, weighted graphs.
+    \item \textbf{MST in Hypergraphs:} Extending the MST problem to hypergraphs, where edges can connect more than two vertices, is less understood and lacks efficient algorithms. Finding optimal algorithms for this generalization, including approximation methods, remains an open question.
+    \item \textbf{Streaming MST:} In streaming settings, where edges are processed sequentially due to memory constraints, designing efficient algorithms to compute or approximate the MST is challenging. Single-pass, memory-efficient algorithms that can construct the MST or approximate it closely with minimal space usage, are still open problems.
 \end{enumerate}
 
 By addressing these open problems, researchers can further advance the SOTA in algorithms for the Minimum Spanning Tree problem and its generalizations.
@@ -1097,12 +1091,13 @@ Using this definition, we can now define the Pfaffian:
 For a weighted orientation $\mathcal{X}$ of $G$, the Pfaffian of $\mathcal{X}$, $\mathbf{Pf}(\mathcal{X})$ is defined as
 $$\sum\limits_{M\in \mathcal{M}} t_M.$$
 Here, $\mathcal{M}$ is all perfect matchings of $G$, and $t_M$ is defined as
-\begin{align}
-t_M=\mathrm{sgn}(\sigma)\cdot \mathcal{X}(i_1,i_2)\mathcal{X}(i_3,i_4)\cdots \mathcal{X}(i_{2n-1},i_{2n}), \label{defpffa}
-\end{align}
+\begin{align*}
+t_M=\mathrm{sgn}(\sigma)\cdot \mathcal{X}(i_1,i_2)\mathcal{X}(i_3,i_4)\cdots \mathcal{X}(i_{2n-1},i_{2n})
+\end{align*}
 where $\sigma=(i_1i_2\cdots i_{2n})$ is a permutation of $V(G)$ such that $M=\{(i_{2j-1},i_{2j})\}_{1\le j\le n}$.
+\label{defpffa}
 \end{definition}
-Note that, although for a matching $M$, the representation permutation $\sigma$ is not unique, but the definition of $t_M$ is consistent. For instance, when we swap $i_1,i_2$, the sign of $\sigma$ changes, and $\mathcal{X}(i_1,i_2)=-\mathcal{X}(i_2,i_1)$, so \eqref{defpffa} remains the same; when we swap $(i_1,i_2)$ with $(i_3,i_4)$, the similar fact is also easy to verify.
+Note that, although for a matching $M$, the representation permutation $\sigma$ is not unique, but the definition of $t_M$ is consistent. For instance, when we swap $i_1,i_2$, the sign of $\sigma$ changes, and $\mathcal{X}(i_1,i_2)=-\mathcal{X}(i_2,i_1)$, so $t_M$ in Definition \ref{defpffa} remains the same; when we swap $(i_1,i_2)$ with $(i_3,i_4)$, the similar fact is also easy to verify.
 
 \subsubsection{A Polynomial Algorithm to Calculate Pfaffian}\
 
@@ -1155,9 +1150,9 @@ Obviously, the $x^k$ coefficient of Pfaffian is a polynomial of degree $\le n$ i
 
 There are several open problems related to the Exact Matching problem: 
 \begin{enumerate}
-    \item \textbf{Deciding whether EM is in P} has remained an open problem for almost four decades and little progress has been made even for very restricted classes of graphs;
+    \item \textbf{Deciding whether EM is in P} has remained an open problem for almost four decades and little progress has been made even for very restricted classes of graphs.
     \item \textbf{Derandomizing} matching problems from the algorithm in \textbf{RNC} class \cite{svensson2017matching}.
-    \item \textbf{EM} together with other related problems, such as \textbf{TkPM}, remains open to design a better \textbf{deterministic approximation algorithm}.
+    \item \textbf{EM} together with other related problems, such as \textbf{TkPM} (Top-k Perfect Matching) \cite{maalouly2022exact}, remains open to design a better \textbf{deterministic approximation algorithm}.
 \end{enumerate}
 
 \section{Our Proposed Problem: Optimal Point Traversing Path}
@@ -1236,17 +1231,19 @@ Let $T$ be an undetermined positive integer. \text{Randomly} choose $0\le b<T$ w
 
 Let $\ell_b$ be the length of the path when $A$ chooses $b$, we now prove that $\mathbb{E}_b[\ell_b]\le \sqrt{2}n^{3/2}+10n$ if $T$ is carefully chosen.
 
-Suppose we are doing the process of traversing $[l,r)$ from left to right, and $P\cap ([l,r)\times [0,n))=\{v_1(x_1,y_1),v_2(x_2,y_2),\ldots,v_k(x_k,y_k)\}$ in the order of $x$-coordinate, i.e. $x_1\le x_2\le \cdots\le x_k$. The number of step in this process can be calculated as
-\begin{align}
-V_{\text{left}\to \text{right}}(l,r):=n+\left(|l-y_1|+\sum\limits_{i=1}^{k-1} |y_{i}-y_{i+1}|+|y_k-r|\right). \label{ggg}
-\end{align}
-The reason is as above: at $x$-coordinate, we always go in one direction, so the number of steps is $n$; at $y$-coordinate, from $v_i$ to $v_{i+1}$, we need $|y_i-y_{i+1}|$ steps, adding the contribution of $(l,0)\to v_1$ and $v_k\to (r,n)$, we get \eqref{ggg}.
+Suppose we are doing the process of traversing $[l,r)$ from left to right, and 
+$$P\cap ([l,r)\times [0,n))=\{v_1(x_1,y_1),v_2(x_2,y_2),\ldots,v_k(x_k,y_k)\}$$
+in the order of $x$-coordinate, i.e. $x_1\le x_2\le \cdots\le x_k$. The number of step in this process can be calculated as
+\begin{align*}
+V_{\text{left}\to \text{right}}(l,r):=n+\left(|l-y_1|+\sum\limits_{i=1}^{k-1} |y_{i}-y_{i+1}|+|y_k-r|\right)
+\end{align*}
+The reason is as follows: at $x$-coordinate, we always go in one direction, so the number of steps is $n$; at $y$-coordinate, from $v_i$ to $v_{i+1}$, we need $|y_i-y_{i+1}|$ steps, adding the contribution of $(l,0)\to v_1$ and $v_k\to (r,n)$, we get the above formula.
 
 \begin{definition}
 \label{def5.3}
 For a point $A_i$, if it lies in a strip $[l,r)$, define the \textbf{distance function} $w(A_i)=\max\{y_i-l,r-y_i\}$.
 \end{definition}
-We use the definition \ref{def5.3} to give a bound of \eqref{ggg}.
+We use the Definition \ref{def5.3} to give a bound of $V_{\text{left}\to \text{right}}(l,r)$.
 
 \begin{lemma}
     \label{ineq}
@@ -1288,7 +1285,7 @@ $$T,T-1,T-2,\cdots,T-2,T-1,T,$$
 respectively. Thus, we have for an even $T$,
 $$\mathbb{E}[w(V)]=\dfrac{1}{T}\cdot \dfrac{1}{4}(T+1)(3T-1)\le \dfrac{3T}{4}+1;$$
 for an odd $T$,
-$$\mathbb{E}[w(V)]=\dfrac{1}{T}\cdot (\dfrac{3T}{2}+1)\dfrac{T}{2}\le \dfrac{3T}{4}+1.$$
+$$\mathbb{E}[w(V)]=\dfrac{1}{T}\cdot \left(\dfrac{3T}{2}+1\right)\dfrac{T}{2}\le \dfrac{3T}{4}+1.$$
 \end{proof}
 Using \ref{lemma5.3}, we have
 \begin{align*}
@@ -1317,7 +1314,7 @@ However, if we only need the length of the path to be $\le (\sqrt{2}+\epsilon)n^
 For every $\epsilon>0$, the probability of $\ell_b\ge (\sqrt{2}+\epsilon)n^{3/2}$ is at most $\dfrac{\sqrt{2}}{\sqrt{2}+\epsilon}+o(1)$.
 \end{lemma}
 Using this lemma, we can randomly choose $O(-\log \delta)$ samples of $b$. Then, with probability $\ge 1-\delta$, we can find a $b$, such that
-$$\ell_b\le (\sqrt{2}+\epsilon)(n^{3/2}).$$
+$$\ell_b\le (\sqrt{2}+\epsilon)n^{3/2}$$
 And the time complexity of this random algorithm $A'$ is $O(n\log n\cdot (-\log \delta))$.
 
 \subsection{Discussions on the General Case}\
@@ -1335,17 +1332,23 @@ We believe that, if a graph has the similar property as the grid graph, we can a
 
 However, in the general case, these properties do not generally hold, and we have no progress to solve this problem. So this is our future work direction.
 
-\section{Conclusion}
+\section{Conclusion}\
 
-In this survey, we have discussed and provided rigorous proofs of several classic randomized algorithms on graph problems, including APSP, MinCut, MST, and Exact Matching. These algorithms  perfectly leverage the nature of the graph structure in different perspectives and show the power of randomness in solving complex problems efficiently. Some of them, such as matrix multiplication-based APSP algorithm and Exact Matching algorithm using Pfaffian, are based on algebraic theories and reveal the deep connection between graph theory and other mathematical fields.
+In this survey, we have discussed and provided rigorous proofs of several classic randomized algorithms on graph problems, including APSP, MinCut, MST, and Exact Matching. These algorithms perfectly leverage the nature of the graph structure in different perspectives and show the power of randomness in solving complex problems efficiently. Some of them, such as matrix multiplication-based APSP algorithm and Exact Matching algorithm using Pfaffian, are based on algebraic theories and reveal the deep connection between graph theory and other mathematical fields.
 
-By understanding these algorithms, we can gain insights into the design of efficient algorithms for graph problems and appreciate the beauty of randomness in algorithm design. Randomized algorithms are indeed more powerful and flexible, and can sometimes yield unbelievable results - expected linear time MST is a perfect example.
+By understanding these algorithms, we can gain insights into the design of efficient algorithms for graph problems and appreciate the beauty of randomness in algorithm design. Randomized algorithms are indeed more powerful and flexible, and can sometimes yield unbelievable results, expected linear time MST is a perfect example.
 
 However, there are still many open problems in the field of randomized algorithms on graphs. For example, can randomized algorithm be replaced by deterministic algorithms? Specifically, is there a linear time MST algorithm? Moreover, some theoretically efficient algorithms may not be practical in moderate-size real-world applications due to the complexity of implementation or the need for a large amount of randomness, as we have seen in the experiment of APSP and MinCut.
 
 In addition, we have proposed a new problem, \textsf{OPTP}, and designed a sublinear algorithm for the special case of grid graphs, which shows the potential of solving the \textsf{OPTP} problem on graphs with special properties. We left the general case as our future work. This example shows the power of randomized approximation algorithms in solving real-world problems.
 
 Randomized graph algorithms are still an active research area, attracting many researchers to explore new algorithms and solve open problems. Nevertheless, this field is just a small part of the vast world of randomized algorithms. We hope this survey can inspire more people to explore the beauty and power of randomness in algorithm design.
+
+\section*{Acknowledgements}\
+
+We would like to thank Prof. Jian Li and all TAs for their guidance and help in the course of the study. We also appreciate the authors of the papers we cited for their excellent work. Without their contributions, this survey would not have been possible.
+
+\newpage
 
 \bibliographystyle{plain} % or any other style you prefer
 \bibliography{references} % use the .bib file
