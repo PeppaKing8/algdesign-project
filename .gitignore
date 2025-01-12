@@ -1,5 +1,5 @@
 APSP/data
-report/report.pdf
+# report/report.pdf
 report/report.aux
 report/report.log
 report/report.out
@@ -11,4 +11,4 @@ report/report.synctex*.gz
 *.fdb_latexmk
 *.fls
 *.vscode
-*.pdf
+# *.pdf
